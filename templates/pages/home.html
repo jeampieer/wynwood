@@ -1,0 +1,137 @@
+{% extends "base/site.html" %}
+{% load static %}
+{% block title %}Wynwood House · Booking{% endblock %}
+{% block content %}
+<section class="wh-promo">{{ copy.promo }}</section>
+
+<section class="wh-hero">
+  <div class="wh-hero-media"></div>
+  <div class="wh-hero-content">
+    <h1>{{ copy.headline }}</h1>
+    <p>{{ copy.eyebrow }}</p>
+    <form class="wh-search-bar" method="get" action="{% url 'properties:search' %}">
+      <div class="wh-search-icon" aria-hidden="true">⌕</div>
+      <div>{{ form.city }}</div>
+      <div class="wh-static-field">⚑ <span>{{ copy.district }}</span></div>
+      <div class="wh-date-pair">{{ form.check_in }}{{ form.check_out }}</div>
+      <div>{{ form.guests }}</div>
+      <button type="submit">{{ copy.search }}</button>
+    </form>
+  </div>
+</section>
+
+<section class="wh-destinations">
+  <div class="wh-home-row-heading">
+    <h2>{{ copy.destinations }}</h2>
+    <span aria-hidden="true">›</span>
+  </div>
+  <div class="wh-destination-track">
+    {% for destination in destinations %}
+      <article class="wh-destination-card">
+        <img src="{% static destination.image %}" alt="{{ destination.name }}">
+        <h3>{{ destination.name }}</h3>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="wh-featured-section">
+  <div class="wh-pill-tabs" aria-label="Property collections">
+    <a href="{% url 'properties:search' %}">Todas las propiedades</a>
+    <a href="{% url 'properties:search' %}">The Collection*</a>
+    <a href="{% url 'properties:search' %}">Casa Wynwood</a>
+  </div>
+  <div class="wh-featured-layout">
+    <div class="wh-featured-copy">
+      <h2>{{ copy.featured }}</h2>
+      <p>{{ copy.featured_body }}</p>
+    </div>
+    <div class="wh-card-grid wh-featured-grid">
+    {% for property in featured_properties %}
+      {% include "properties/_property_card.html" with property=property %}
+    {% empty %}
+      <p>Ejecuta <code>python manage.py seed_demo_data</code> para cargar propiedades.</p>
+    {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="wh-services-section">
+  <div class="wh-services-copy">
+    <h2>{{ copy.services }}</h2>
+    <p>{{ copy.services_body }}</p>
+  </div>
+  <div class="wh-services-grid">
+    {% for service in services %}
+      <article class="wh-service-tile">
+        <img src="{% static service.image %}" alt="{{ service.name }}">
+        <h3>{{ service.name }}</h3>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="wh-events-section">
+  <div class="wh-events-collage" aria-hidden="true">
+    <img src="{% static 'img/homepage/events-food.png' %}" alt="">
+  </div>
+  <div class="wh-events-copy">
+    <h2>{{ copy.events_title }}</h2>
+    <p>{{ copy.events_body }}</p>
+    <a href="#">{{ copy.events_cta }}</a>
+  </div>
+</section>
+
+<section class="wh-benefits-section">
+  <h2>{{ copy.benefits }}</h2>
+  <div class="wh-benefits-grid">
+    {% for benefit in benefits %}
+      <article class="wh-benefit-card{% if benefit.image %} wh-benefit-card--image{% endif %}">
+        {% if benefit.image %}
+          <img src="{% static benefit.image %}" alt="{{ benefit.title }}">
+        {% endif %}
+        <div>
+          <h3>{{ benefit.title }}</h3>
+          {% if benefit.text %}<p>{{ benefit.text }}</p>{% endif %}
+          {% if not benefit.image %}<a href="{% url 'properties:search' %}">{{ copy.learn_more }}</a>{% endif %}
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="wh-brand-panels">
+  <article>
+    <img src="{% static 'img/homepage/brand-casa.png' %}" alt="Casa Wynwood">
+  </article>
+  <article>
+    <img src="{% static 'img/homepage/brand-collection.png' %}" alt="The Collection">
+  </article>
+</section>
+
+<section class="wh-long-stay">
+  <img src="{% static 'img/homepage/long-stay.png' %}" alt="Apartamento Wynwood para alquileres a largo plazo">
+  <div>
+    <h2>{{ copy.long_title }}</h2>
+    <p>{{ copy.long_body }}</p>
+    <a href="mailto:reservas@wynwood-house.test">{{ copy.contact }}</a>
+  </div>
+</section>
+
+<section class="wh-invest-banner">
+  <img src="{% static 'img/homepage/invest-banner.png' %}" alt="Interior moderno Wynwood">
+  <div>
+    <h2>{{ copy.invest_title }}</h2>
+    <p>{{ copy.invest_body }}</p>
+  </div>
+  <a href="#">{{ copy.learn_more }}</a>
+</section>
+
+<section class="wh-press-strip" aria-label="Press mentions">
+  <span>VOGUE</span>
+  <span>L'BEAUTÉ HOMME</span>
+  <span>Forbes</span>
+  <span>Portafolio</span>
+  <span>La República</span>
+</section>
+{% endblock %}

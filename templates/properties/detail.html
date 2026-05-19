@@ -1,0 +1,46 @@
+{% extends "base/site.html" %}
+{% block title %}{{ property.name }} · Wynwood{% endblock %}
+{% block content %}
+<section class="wh-detail">
+  <div class="wh-detail-top">
+    <span>{{ ui.menu }}</span>
+    <a class="wh-brand" href="{% url 'pages:home' %}">wynwood<span>*</span></a>
+    <nav><a href="?lang=en">EN</a> / <a href="?lang=es">ES</a> <a href="{% url 'accounts:login' %}">{{ ui.login }}</a> <a href="#reserve">{{ ui.book_now }}</a></nav>
+  </div>
+  <nav class="wh-breadcrumb">✶ Colombia / {{ property.city.name }} / {{ property.name }}</nav>
+  <div class="wh-gallery">
+    {% for image in property.images.all %}
+      <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:property.name }}">
+    {% endfor %}
+  </div>
+  <div class="wh-detail-layout">
+    <article>
+      <h1>{{ property.name }}</h1>
+      <p class="wh-location">{{ property.neighborhood }}, {{ property.city.name }}</p>
+      <p>{{ property.description }}</p>
+      <div class="wh-specs">
+        <span>{{ property.capacity }} invitados</span>
+        <span>{{ property.bedrooms }} habitación</span>
+        <span>{{ property.beds }} cama</span>
+        <span>{{ property.bathrooms }} baño</span>
+      </div>
+      <div class="wh-amenities">
+        {% for amenity in property.amenities.all %}
+          <span>{{ amenity.icon }} {{ amenity.name }}</span>
+        {% endfor %}
+      </div>
+    </article>
+    <aside id="reserve" class="wh-booking-card">
+      <div class="wh-tabs"><strong>DIARIO</strong><span>MENSUAL</span></div>
+      <p><strong>USD {{ property.nightly_price }}</strong> por noche</p>
+      <form method="post">
+        {% csrf_token %}
+        {{ booking_form.non_field_errors }}
+        <label>Llegada · Salida<span class="wh-date-pair">{{ booking_form.check_in }}{{ booking_form.check_out }}</span></label>
+        <label>{{ booking_form.guests.label }}{{ booking_form.guests }}</label>
+        <button type="submit">Reservar ahora</button>
+      </form>
+    </aside>
+  </div>
+</section>
+{% endblock %}

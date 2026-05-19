@@ -1,0 +1,12 @@
+{% extends "base/site.html" %}
+{% block title %}Iniciar sesión · Wynwood{% endblock %}
+{% block content %}
+<section class="wh-auth">
+  <form method="post">
+    {% csrf_token %}
+    <h1>Iniciar sesión</h1>
+    {{ form.as_p }}
+    <button type="submit">Entrar</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base/site.html" %}
+{% load static %}
+{% block title %}Check-in flexible · Wynwood{% endblock %}
+{% block content %}
+<section class="wh-service-step wh-addon-step">
+  <div class="wh-detail-top">
+    <span>{{ ui.menu }}</span>
+    <a class="wh-brand" href="{% url 'pages:home' %}">wynwood<span>*</span></a>
+    <nav><a href="{% url 'bookings:services' property.slug %}?{{ request.GET.urlencode }}">Servicios</a> <a href="{{ checkout_url }}">{{ ui.book_now }}</a></nav>
+  </div>
+  <nav class="wh-breadcrumb">✶ Colombia / {{ property.city.name }} / {{ property.name }} / Check-in flexible</nav>
+
+  <div class="wh-addon-layout">
+    <div class="wh-addon-media">
+      <img src="{% static 'img/figma/service-checkin.webp' %}" alt="">
+    </div>
+    <form method="post" class="wh-addon-form">
+      {% csrf_token %}
+      <p class="wh-step-kicker">04. Check-in & Check-out flexible</p>
+      <h1>AJUSTA TU LLEGADA A TU RITMO</h1>
+      <p>Déjanos tu horario ideal y coordinaremos la disponibilidad operativa antes de confirmar el pago.</p>
+      {{ form.non_field_errors }}
+      <label>{{ form.arrival_time.label }}{{ form.arrival_time }}{{ form.arrival_time.errors }}</label>
+      <label>{{ form.departure_time.label }}{{ form.departure_time }}{{ form.departure_time.errors }}</label>
+      <label>{{ form.notes.label }}{{ form.notes }}</label>
+      <button class="wh-primary" type="submit">Añadir y continuar</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

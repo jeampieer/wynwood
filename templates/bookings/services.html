@@ -1,0 +1,57 @@
+{% extends "base/site.html" %}
+{% load static %}
+{% block title %}Servicios · Wynwood{% endblock %}
+{% block content %}
+<section class="wh-service-step">
+  <div class="wh-detail-top">
+    <span>{{ ui.menu }}</span>
+    <a class="wh-brand" href="{% url 'pages:home' %}">wynwood<span>*</span></a>
+    <nav><a href="?lang=en">EN</a> / <a href="?lang=es">ES</a> <a href="{% url 'accounts:login' %}">{{ ui.login }}</a> <a href="{{ checkout_url }}">{{ ui.book_now }}</a></nav>
+  </div>
+  <nav class="wh-breadcrumb">✶ Colombia / {{ property.city.name }} / {{ property.name }} / Servicios</nav>
+
+  <div class="wh-service-step-layout">
+    <article>
+      <p class="wh-step-kicker">03. Servicios adicionales</p>
+      <h1>BIENVENIDO A WYNWOOD HOUSE{% if request.user.first_name %} {{ request.user.first_name|upper }}{% endif %}</h1>
+      <p class="wh-step-intro">Personaliza tu estadía con servicios preparados antes de tu llegada. Puedes continuar sin seleccionar nada o entrar a los flujos específicos del prototipo.</p>
+
+      <div class="wh-service-list">
+        {% for option in service_options %}
+          {% with service=option.service %}
+          <div class="wh-service-option">
+            <img src="{% static option.image %}" alt="">
+            <div>
+              <h2>{{ service.name }}</h2>
+              <p>{{ service.description }}</p>
+              <span>USD {{ service.price }}</span>
+            </div>
+            {% if option.kind == "checkin" %}
+              <a href="{% url 'bookings:flexible-checkin' property.slug %}?{{ request.GET.urlencode }}">Configurar</a>
+            {% elif option.kind == "transport" %}
+              <a href="{% url 'bookings:transport' property.slug %}?{{ request.GET.urlencode }}">Configurar</a>
+            {% else %}
+              <a href="{{ option.checkout_url }}">Añadir</a>
+            {% endif %}
+          </div>
+          {% endwith %}
+        {% endfor %}
+      </div>
+    </article>
+
+    <aside class="wh-summary wh-step-summary">
+      {% with cover=property.cover_image %}
+        {% if cover %}<img src="{{ cover.image.url }}" alt="{{ property.name }}">{% endif %}
+      {% endwith %}
+      <h2>{{ property.name }}</h2>
+      <p>{{ property.neighborhood }}, {{ property.city.name }}</p>
+      <dl>
+        <dt>Llegada</dt><dd>{{ availability.check_in }}</dd>
+        <dt>Salida</dt><dd>{{ availability.check_out }}</dd>
+        <dt>Huéspedes</dt><dd>{{ availability.guests }}</dd>
+      </dl>
+      <a class="wh-primary wh-summary-action" href="{{ checkout_url }}">Continuar a pago</a>
+    </aside>
+  </div>
+</section>
+{% endblock %}

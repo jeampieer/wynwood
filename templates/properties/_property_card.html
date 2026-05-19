@@ -1,0 +1,17 @@
+<article class="wh-property-card">
+  <a href="{{ property.get_absolute_url }}">
+    {% with cover=property.cover_image %}
+      {% if cover %}
+        <img src="{{ cover.image.url }}" alt="{{ cover.alt_text|default:property.name }}">
+      {% else %}
+        <div class="wh-image-placeholder"></div>
+      {% endif %}
+    {% endwith %}
+    <div>
+      <h3>{{ property.name }}</h3>
+      <p>{{ property.neighborhood }}, {{ property.city.name }}</p>
+      <strong>USD {{ property.nightly_price }} / {{ ui.per_night }}</strong>
+      <span>{{ property.bedrooms }} {{ ui.bedroom_short }} · {{ property.beds }} {{ ui.bed_short }} · {{ property.bathrooms }} {{ ui.bath_short }}</span>
+    </div>
+  </a>
+</article>

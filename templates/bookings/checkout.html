@@ -1,0 +1,65 @@
+{% extends "base/site.html" %}
+{% load static %}
+{% block title %}Checkout · Wynwood{% endblock %}
+{% block content %}
+<section class="wh-checkout">
+  <div class="wh-detail-top">
+    <span>{{ ui.menu }}</span>
+    <a class="wh-brand" href="{% url 'pages:home' %}">wynwood<span>*</span></a>
+    <nav><a href="?lang=en">EN</a> / <a href="?lang=es">ES</a> <a href="{% url 'accounts:login' %}">{{ ui.login }}</a> <a href="#pay">{{ ui.book_now }}</a></nav>
+  </div>
+  <nav class="wh-breadcrumb">✶ Colombia / {{ property.city.name }} / {{ property.name }} / Página de pago</nav>
+  <div class="wh-checkout-layout">
+    <form method="post" class="wh-checkout-form">
+      {% csrf_token %}
+      <h1>REGISTRO</h1>
+      <p>Te enviaremos la confirmación de tu reserva por correo electrónico.</p>
+      {{ form.non_field_errors }}
+      <div class="wh-form-grid">
+        <label>{{ form.email.label }}{{ form.email }}{{ form.email.errors }}</label>
+        <label>{{ form.full_name.label }}{{ form.full_name }}{{ form.full_name.errors }}</label>
+        <label>{{ form.password1.label }}{{ form.password1 }}{{ form.password1.errors }}</label>
+        <label>{{ form.password2.label }}{{ form.password2 }}{{ form.password2.errors }}</label>
+        <label>{{ form.nationality.label }}{{ form.nationality }}</label>
+        <label>{{ form.phone.label }}{{ form.phone }}</label>
+      </div>
+      <div class="wh-checkout-heading-row">
+        <h2>SERVICIOS ADICIONALES</h2>
+        <a href="{{ services_url }}">Editar servicios</a>
+      </div>
+      <div class="wh-services">
+        {% for checkbox in form.services %}
+          <label class="wh-service-row">
+            {% if forloop.counter == 1 %}<img src="{% static 'img/figma/service-checkin.webp' %}" alt="">
+            {% elif forloop.counter == 2 %}<img src="{% static 'img/figma/service-transport.webp' %}" alt="">
+            {% elif forloop.counter == 3 %}<img src="{% static 'img/figma/service-fridge.webp' %}" alt="">
+            {% else %}<img src="{% static 'img/figma/service-crib.webp' %}" alt="">{% endif %}
+            {{ checkbox.tag }}
+            <span>{{ checkbox.choice_label }}</span>
+          </label>
+        {% endfor %}
+      </div>
+      <h2>MÉTODO DE PAGO</h2>
+      <div class="wh-payment-method">💳 Pago con tarjeta Débito / Crédito · Simulado</div>
+      <button id="pay" class="wh-primary" type="submit">Pagar y confirmar reserva</button>
+    </form>
+    <aside class="wh-summary">
+      {% with cover=property.cover_image %}
+        {% if cover %}<img src="{{ cover.image.url }}" alt="{{ property.name }}">{% endif %}
+      {% endwith %}
+      <h2>{{ property.name }}</h2>
+      <p>{{ property.neighborhood }}, {{ property.city.name }}</p>
+      <dl>
+        <dt>Fechas</dt><dd>{{ availability.check_in }} · {{ availability.check_out }}</dd>
+        <dt>Huéspedes</dt><dd>{{ availability.guests }} personas</dd>
+        <dt>Subtotal</dt><dd>USD {{ preview.subtotal }}</dd>
+        <dt>Tarifa de limpieza</dt><dd>USD {{ preview.cleaning_fee }}</dd>
+        <dt>Impuestos</dt><dd>USD {{ preview.taxes }}</dd>
+        <dt>Descuento Wynwood Points</dt><dd>-USD {{ preview.discount }}</dd>
+        <dt>Total</dt><dd><strong>USD {{ preview.total }}</strong></dd>
+      </dl>
+      <small>Con esta reserva estás generando Wynwood Points.</small>
+    </aside>
+  </div>
+</section>
+{% endblock %}

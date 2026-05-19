@@ -1,0 +1,31 @@
+{% extends "base/site.html" %}
+{% block title %}Resultados · Wynwood{% endblock %}
+{% block content %}
+<section class="wh-results">
+  <form class="wh-filter-bar" method="get">
+    <div class="wh-filter-grid-icon">⌘</div>
+    <label>{{ form.city }}<span>+</span></label>
+    <label><span>Distrito</span><span>+</span></label>
+    <label>{{ form.check_in }}{{ form.check_out }}<span>+</span></label>
+    <label>{{ form.guests }}<span>+</span></label>
+    <label><span>Rango de precio</span><span>+</span></label>
+    <label><span>Comodidades</span><span>+</span></label>
+  </form>
+  <div class="wh-results-layout">
+    <div class="wh-results-list">
+      {% for property in properties %}
+        {% include "properties/_property_card.html" with property=property %}
+      {% empty %}
+        <div class="wh-empty">
+          <h2>No encontramos disponibilidad</h2>
+          <p>Prueba con otra ciudad, fecha o número de huéspedes.</p>
+        </div>
+      {% endfor %}
+    </div>
+    <aside class="wh-map-panel">
+      <span>Map</span>
+      <strong>Explora propiedades cerca de los mejores barrios.</strong>
+    </aside>
+  </div>
+</section>
+{% endblock %}
