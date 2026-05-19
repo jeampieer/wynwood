@@ -5,11 +5,14 @@
   <form class="wh-filter-bar" method="get">
     <div class="wh-filter-grid-icon">⌘</div>
     <label>{{ form.city }}<span>+</span></label>
-    <label><span>Distrito</span><span>+</span></label>
     <label>{{ form.check_in }}{{ form.check_out }}<span>+</span></label>
     <label>{{ form.guests }}<span>+</span></label>
-    <label><span>Rango de precio</span><span>+</span></label>
-    <label><span>Comodidades</span><span>+</span></label>
+    <button type="submit">Buscar</button>
+    {{ form.non_field_errors }}
+    {{ form.city.errors }}
+    {{ form.check_in.errors }}
+    {{ form.check_out.errors }}
+    {{ form.guests.errors }}
   </form>
   <div class="wh-results-layout">
     <div class="wh-results-list">

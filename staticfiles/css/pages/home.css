@@ -1,0 +1,676 @@
+.wh-promo {
+  display: flex;
+  min-height: 2.375rem;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--wh-blue);
+  text-align: center;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+}
+
+.wh-promo-copy {
+  font-weight: 700;
+}
+
+.wh-promo-timer {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.1875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.wh-promo-timer span {
+  min-width: 2ch;
+  font-weight: 700;
+}
+
+.wh-promo-timer small {
+  color: #315b63;
+  font-size: 0.5625rem;
+}
+
+.wh-promo a {
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 0.125rem;
+  font-weight: 700;
+}
+
+.wh-hero {
+  position: relative;
+  min-height: 43.125rem;
+  margin-top: 0;
+  overflow: hidden;
+}
+
+.wh-hero-media {
+  position: absolute;
+  inset: 0;
+  background-color: #d8d1c8;
+  background-image:
+    linear-gradient(90deg, rgba(0, 0, 0, .14), rgba(0, 0, 0, .12)),
+    url("../../img/figma/hero-suite.webp");
+  background-position: center 58%, center 58%;
+  background-size: cover, cover;
+  background-repeat: no-repeat;
+}
+
+.wh-hero-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 43.125rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5.5rem 4.5rem 5rem;
+  color: var(--wh-white);
+  text-align: center;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  color: inherit;
+}
+
+.wh-hero h1,
+.wh-detail h1,
+.wh-confirmation h1 {
+  font-family: "Acumin WH", Impact, "Arial Narrow", sans-serif;
+  font-size: 4.375rem;
+  line-height: .82;
+  text-transform: uppercase;
+}
+
+.wh-hero h1 {
+  font-size: clamp(3.125rem, 6vw, 6rem);
+  white-space: nowrap;
+}
+
+.wh-hero p {
+  margin: 0.875rem 0 1.625rem;
+  letter-spacing: 0.5rem;
+  text-transform: uppercase;
+}
+
+.wh-search-bar {
+  display: grid;
+  grid-template-columns: 2.75rem 1.05fr 1fr 1.9fr 1.3fr auto;
+  width: min(70rem, 100%);
+  overflow: hidden;
+  border-radius: 0.8125rem;
+  background: rgba(255, 255, 255, .94);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .18);
+  color: var(--wh-ink);
+}
+
+.wh-search-bar > * {
+  border-right: 1px solid var(--wh-line);
+}
+
+.wh-search-icon,
+.wh-static-field,
+.wh-date-pair {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.wh-search-icon {
+  justify-content: center;
+  font-size: 1.125rem;
+}
+
+.wh-static-field {
+  min-height: 3rem;
+  padding: 0 1rem;
+  font-size: 0.6875rem;
+}
+
+.wh-date-pair input {
+  min-width: 0;
+  padding-left: 0.625rem;
+  padding-right: 0.375rem;
+}
+
+.wh-search-bar select,
+.wh-search-bar input,
+.wh-filter-bar select,
+.wh-filter-bar input,
+.wh-booking-card input,
+.wh-checkout input,
+.wh-checkout select {
+  width: 100%;
+  min-height: 3rem;
+  border: 0;
+  background: transparent;
+  padding: 0 1rem;
+  font: inherit;
+  font-size: 0.6875rem;
+}
+
+.wh-search-bar button,
+.wh-booking-card button,
+.wh-checkout button,
+.wh-auth button,
+.wh-primary {
+  border: 0;
+  background: var(--wh-black);
+  color: var(--wh-white);
+  padding: 0 1.75rem;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+}
+
+.wh-home-row-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 3.25rem 2.625rem 1.75rem;
+}
+
+.wh-home-row-heading h2,
+.wh-featured-copy h2,
+.wh-services-copy h2,
+.wh-events-copy h2,
+.wh-benefits-section h2,
+.wh-long-stay h2,
+.wh-invest-banner h2 {
+  font-family: "Acumin WH", Impact, "Arial Narrow", sans-serif;
+  font-size: clamp(2.125rem, 3.5vw, 3.625rem);
+  line-height: .86;
+  text-transform: uppercase;
+}
+
+.wh-destination-track {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 0 2.625rem 4.875rem;
+}
+
+.wh-destination-track::-webkit-scrollbar {
+  display: none;
+}
+
+.wh-destination-card {
+  position: relative;
+  flex: 0 0 clamp(15rem, 22vw, 19.0625rem);
+  height: 21.25rem;
+  overflow: hidden;
+  background: #b9b3aa;
+  scroll-snap-align: start;
+}
+
+.wh-destination-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.wh-destination-card h3,
+.wh-benefit-card--image h3 {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: var(--wh-white);
+  font-family: "Acumin WH", Impact, "Arial Narrow", sans-serif;
+  font-size: clamp(2.5rem, 4vw, 3.875rem);
+  line-height: .88;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.wh-destination-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .18);
+}
+
+.wh-destination-card h3 {
+  z-index: 1;
+  padding: 0 1.125rem;
+}
+
+.wh-carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.wh-carousel-button {
+  display: grid;
+  width: 1.875rem;
+  height: 2.375rem;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--wh-black);
+  font-size: 2.625rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.wh-carousel-button:disabled {
+  color: #dedede;
+  cursor: default;
+}
+
+.wh-featured-section {
+  padding: 2.25rem 2.625rem 5.625rem;
+  background: #f4f3f1;
+}
+
+.wh-pill-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.wh-pill-tabs a {
+  border-radius: 62.4375rem;
+  background: #d9eef1;
+  padding: 0.5625rem 1.125rem;
+  font-size: 0.625rem;
+}
+
+.wh-pill-tabs a:first-child {
+  background: var(--wh-black);
+  color: var(--wh-white);
+}
+
+.wh-featured-layout {
+  display: grid;
+  grid-template-columns: minmax(15rem, .8fr) minmax(0, 1.65fr);
+  align-items: center;
+  gap: 3.25rem;
+}
+
+.wh-featured-copy p,
+.wh-services-copy p,
+.wh-events-copy p,
+.wh-long-stay p,
+.wh-invest-banner p {
+  margin: 0.875rem 0 0;
+  max-width: 26.25rem;
+  color: #fff;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.wh-featured-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.wh-featured-grid .wh-property-card {
+  position: relative;
+  min-height: 27.5rem;
+  border: 0;
+  overflow: hidden;
+  background: #cfc8bd;
+}
+
+.wh-featured-grid .wh-property-card:nth-child(n+3) {
+  display: none;
+}
+
+.wh-featured-grid .wh-property-card a,
+.wh-featured-grid .wh-property-card img {
+  width: 100%;
+  height: 100%;
+}
+
+.wh-featured-grid .wh-property-card img {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+}
+
+.wh-featured-grid .wh-property-card div {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  padding: 5rem 1.5rem 1.375rem;
+  background: linear-gradient(0deg, rgba(0, 0, 0, .72), rgba(0, 0, 0, 0));
+  color: var(--wh-white);
+}
+
+.wh-featured-grid .wh-property-card p,
+.wh-featured-grid .wh-property-card span {
+  color: rgba(255, 255, 255, .8);
+}
+
+.wh-services-section {
+  display: grid;
+  grid-template-columns: minmax(15rem, .82fr) minmax(0, 1.5fr);
+  gap: 4rem;
+  align-items: start;
+  padding: 5.75rem 3rem 7.5rem;
+}
+
+.wh-services-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.625rem;
+}
+
+.wh-service-tile img {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  object-fit: cover;
+}
+
+.wh-service-tile h3 {
+  margin: 0.875rem 0 0;
+  font-family: "Acumin WH", Impact, "Arial Narrow", sans-serif;
+  font-size: 1.375rem;
+  letter-spacing: 0.375rem;
+  line-height: .9;
+  text-transform: uppercase;
+}
+
+.wh-events-section {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  min-height: 47.5rem;
+  padding: 0 0 5.375rem;
+}
+
+.wh-events-collage {
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  padding: 0 1.75rem 0 4rem;
+}
+
+.wh-events-collage img {
+  width: min(35rem, 100%);
+  max-height: 41.25rem;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.wh-events-copy {
+  display: grid;
+  align-content: center;
+  padding: 5rem 4.875rem;
+  background: #f5a800;
+}
+
+.wh-events-copy a,
+.wh-long-stay a,
+.wh-benefit-card a {
+  justify-self: start;
+  margin-top: 1.375rem;
+  border-radius: 62.4375rem;
+  background: var(--wh-black);
+  color: var(--wh-white);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+}
+
+.wh-benefits-section {
+  padding: 0 2.625rem 4.75rem;
+}
+
+.wh-benefits-section h2 {
+  margin-bottom: 2.125rem;
+}
+
+.wh-benefits-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr 1.25fr;
+  gap: 1.875rem;
+}
+
+.wh-benefit-card {
+  position: relative;
+  min-height: 13.75rem;
+  overflow: hidden;
+  background: var(--wh-white);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, .08);
+}
+
+.wh-benefit-card:not(.wh-benefit-card--image) {
+  padding: 2.375rem 2rem;
+}
+
+.wh-benefit-card img {
+  width: 100%;
+  height: 100%;
+  min-height: 13.75rem;
+  object-fit: cover;
+  filter: brightness(.72);
+}
+
+.wh-benefit-card h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.wh-benefit-card p {
+  margin: 0.625rem 0 0;
+  color: #4c4944;
+  line-height: 1.45;
+}
+
+.wh-benefit-card--image h3 {
+  justify-items: start;
+  place-items: end start;
+  padding: 1.5rem;
+  font-size: 2.25rem;
+}
+
+.wh-brand-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.875rem;
+  padding: 2.125rem 2.625rem 5.875rem;
+}
+
+.wh-brand-panels article {
+  min-height: 40.625rem;
+  overflow: hidden;
+  background: #8e8176;
+}
+
+.wh-brand-panels img {
+  width: 100%;
+  height: 100%;
+  min-height: 40.625rem;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.wh-section {
+  padding: 3.5rem 4.5rem;
+}
+
+.wh-section-heading {
+  margin-bottom: 1.5rem;
+}
+
+.wh-section-heading p,
+.wh-split-band p:first-child,
+.wh-confirmation > div > p:first-child {
+  color: var(--wh-muted);
+  letter-spacing: 0.3125rem;
+  text-transform: uppercase;
+}
+
+.wh-section-heading h2,
+.wh-split-band h2,
+.wh-long-stay h2 {
+  font-family: "Acumin WH", Impact, sans-serif;
+  font-size: 2.625rem;
+  text-transform: uppercase;
+}
+
+.wh-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.375rem;
+}
+
+.wh-property-card {
+  border-bottom: 1px solid var(--wh-line);
+  background: var(--wh-white);
+}
+
+.wh-property-card img,
+.wh-image-placeholder {
+  aspect-ratio: 1.52 / 1;
+  width: 100%;
+  object-fit: cover;
+  background: linear-gradient(135deg, #c9c3b7, #f3f0ea);
+}
+
+.wh-property-card div {
+  display: grid;
+  gap: 0.1875rem;
+  padding: 0.625rem 0 1rem;
+}
+
+.wh-property-card h3 {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.wh-property-card p,
+.wh-property-card span,
+.wh-summary small,
+.wh-location {
+  color: var(--wh-muted);
+}
+
+.wh-split-band {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding: 4rem 4.5rem;
+  border-top: 1px solid var(--wh-line);
+}
+
+.wh-long-stay {
+  display: grid;
+  grid-template-columns: minmax(20rem, 27.5rem) minmax(22.5rem, 35rem);
+  gap: 4.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 7.875rem 5.25rem 8.25rem;
+  background: var(--wh-white);
+}
+
+.wh-long-stay > img {
+  width: 100%;
+  aspect-ratio: 440 / 580;
+  min-height: 0;
+  object-fit: cover;
+  object-position: center;
+}
+
+.wh-long-stay > div {
+  max-width: 35rem;
+}
+
+.wh-long-stay h2 {
+  max-width: none;
+  font-size: clamp(1.75rem, 2.25vw, 2.25rem);
+  line-height: .9;
+  white-space: nowrap;
+}
+
+.wh-long-stay p {
+  max-width: 35rem;
+  margin-top: 0.625rem;
+  color: var(--wh-black);
+  font-size: 0.8125rem;
+  line-height: 1.12;
+}
+
+.wh-long-stay a {
+  display: grid;
+  width: 12.5rem;
+  min-height: 2.375rem;
+  place-items: center;
+  margin-top: 2.75rem;
+  padding: 0 1.5rem;
+}
+
+.wh-confirmation a {
+  justify-self: end;
+  border: 1px solid var(--wh-black);
+  border-radius: 62.4375rem;
+  padding: 0.75rem 1.5rem;
+}
+
+.wh-invest-banner {
+  position: relative;
+  display: grid;
+  min-height: 31.25rem;
+  align-items: end;
+  overflow: hidden;
+  padding: 3.5rem 3.625rem;
+  color: var(--wh-white);
+}
+
+.wh-invest-banner > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.wh-invest-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, .4), rgba(0, 0, 0, .05));
+}
+
+.wh-invest-banner > div,
+.wh-invest-banner > a {
+  position: relative;
+  z-index: 1;
+}
+
+.wh-invest-banner > a {
+  position: absolute;
+  right: 3.75rem;
+  bottom: 4.25rem;
+  z-index: 1;
+  border: 2px solid rgba(255, 255, 255, .9);
+  border-radius: 62.4375rem;
+  padding: 0.9375rem 2.75rem;
+  color: var(--wh-white);
+  text-transform: uppercase;
+}
+
+.wh-press-strip {
+  display: flex;
+  justify-content: center;
+  gap: clamp(1.5rem, 6vw, 5.375rem);
+  padding: 3rem 2rem;
+  font-family: Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+}

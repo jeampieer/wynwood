@@ -2,7 +2,16 @@
 {% load static %}
 {% block title %}Wynwood House · Booking{% endblock %}
 {% block content %}
-<section class="wh-promo">{{ copy.promo }}</section>
+<section class="wh-promo" data-promo-countdown data-promo-duration-minutes="1979">
+  <span class="wh-promo-copy">{{ copy.promo }}</span>
+  <span class="wh-promo-timer" aria-live="polite">
+    <span data-promo-days>01</span><small>d</small>
+    <span data-promo-hours>08</span><small>h</small>
+    <span data-promo-minutes>59</span><small>m</small>
+    <span data-promo-seconds>00</span><small>s</small>
+  </span>
+  <a href="{% url 'properties:search' %}">{{ copy.promo_cta }}</a>
+</section>
 
 <section class="wh-hero">
   <div class="wh-hero-media"></div>
@@ -23,13 +32,15 @@
 <section class="wh-destinations">
   <div class="wh-home-row-heading">
     <h2>{{ copy.destinations }}</h2>
-    <span aria-hidden="true">›</span>
+    <div class="wh-carousel-controls" aria-label="Destinations carousel controls">
+      <button class="wh-carousel-button" type="button" data-carousel-prev aria-label="Anterior">‹</button>
+      <button class="wh-carousel-button" type="button" data-carousel-next aria-label="Siguiente">›</button>
+    </div>
   </div>
-  <div class="wh-destination-track">
+  <div class="wh-destination-track" data-carousel-track>
     {% for destination in destinations %}
       <article class="wh-destination-card">
         <img src="{% static destination.image %}" alt="{{ destination.name }}">
-        <h3>{{ destination.name }}</h3>
       </article>
     {% endfor %}
   </div>

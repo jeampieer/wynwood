@@ -8,7 +8,7 @@
     <a class="wh-brand" href="{% url 'pages:home' %}">wynwood<span>*</span></a>
     <nav><a href="?lang=en">EN</a> / <a href="?lang=es">ES</a> <a href="{% url 'accounts:login' %}">{{ ui.login }}</a> <a href="{{ checkout_url }}">{{ ui.book_now }}</a></nav>
   </div>
-  <nav class="wh-breadcrumb">✶ Colombia / {{ property.city.name }} / {{ property.name }} / Servicios</nav>
+  <nav class="wh-breadcrumb">✶ {{ property.city.country }} / {{ property.city.name }} / {{ property.name }} / Servicios</nav>
 
   <div class="wh-service-step-layout">
     <article>

@@ -1,15 +1,17 @@
 from io import BytesIO
+from pathlib import Path
 
 import pytest
 from django.core.files.base import ContentFile
+from django.core.management import call_command
 from PIL import Image
 
 from applications.properties.models import City, Property, PropertyImage
 
 
 @pytest.mark.django_db
-def test_property_image_is_converted_to_webp(settings):
-    settings.MEDIA_ROOT = settings.BASE_DIR / "test-media"
+def test_property_image_is_converted_to_webp(settings, tmp_path):
+    settings.MEDIA_ROOT = tmp_path
     city = City.objects.create(name="Bogotá", country="Colombia")
     prop = Property.objects.create(
         city=city,
@@ -38,3 +40,22 @@ def test_property_image_is_converted_to_webp(settings):
     assert image.image.name.endswith(".webp")
     optimized = Image.open(image.image.path)
     assert max(optimized.size) <= 1200
+
+
+@pytest.mark.django_db
+def test_seed_demo_data_repairs_missing_property_image_files(settings, tmp_path):
+    settings.MEDIA_ROOT = tmp_path
+    call_command("seed_demo_data")
+    prop = Property.objects.get(slug="modern-duplex-parque-virrey")
+    first_image = prop.images.first()
+    missing_path = first_image.image.path
+    first_image.image.storage.delete(first_image.image.name)
+
+    assert not Path(missing_path).exists()
+
+    call_command("seed_demo_data")
+    prop.refresh_from_db()
+    images = list(prop.images.all())
+
+    assert len(images) == 3
+    assert all(image.image.storage.exists(image.image.name) for image in images)

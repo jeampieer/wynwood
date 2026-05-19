@@ -20,6 +20,7 @@ from applications.bookings.models import (
     Booking,
     BookingStatusChoices,
     ExtraService,
+    ExtraServiceTypeChoices,
     Payment,
     PaymentStatusChoices,
 )
@@ -72,8 +73,8 @@ class ServiceCatalogView(AvailabilityContextMixin, TemplateView):
             {
                 "service": service,
                 "checkout_url": self._service_checkout_url(service),
-                "kind": self._service_kind(service),
-                "image": self._service_image(service),
+                "kind": service.service_type,
+                "image": service.display_image(),
             }
             for service in services
         ]
@@ -85,24 +86,6 @@ class ServiceCatalogView(AvailabilityContextMixin, TemplateView):
         selected.add(str(service.pk))
         return self.checkout_url(sorted(selected))
 
-    def _service_kind(self, service):
-        normalized = service.name.lower()
-        if "check-in" in normalized:
-            return "checkin"
-        if "transporte" in normalized:
-            return "transport"
-        if "nevera" in normalized:
-            return "fridge"
-        return "crib"
-
-    def _service_image(self, service):
-        return {
-            "checkin": "img/figma/service-checkin.webp",
-            "transport": "img/figma/service-transport.webp",
-            "fridge": "img/figma/service-fridge.webp",
-            "crib": "img/figma/service-crib.webp",
-        }[self._service_kind(service)]
-
 
 class FlexibleCheckinView(AvailabilityContextMixin, FormView):
     template_name = "bookings/flexible_checkin.html"
@@ -110,7 +93,7 @@ class FlexibleCheckinView(AvailabilityContextMixin, FormView):
 
     def form_valid(self, form):
         messages.success(self.request, "Agregamos la solicitud de check-in flexible a tu reserva.")
-        service = ExtraService.objects.filter(name__icontains="Check-in", is_active=True).first()
+        service = ExtraService.objects.filter(service_type=ExtraServiceTypeChoices.CHECKIN, is_active=True).first()
         selected = set(self.request.GET.getlist("services"))
         if service:
             selected.add(str(service.pk))
@@ -128,7 +111,7 @@ class TransportServiceView(AvailabilityContextMixin, FormView):
 
     def form_valid(self, form):
         messages.success(self.request, "Agregamos el servicio de transporte a tu reserva.")
-        service = ExtraService.objects.filter(name__icontains="transporte", is_active=True).first()
+        service = ExtraService.objects.filter(service_type=ExtraServiceTypeChoices.TRANSPORT, is_active=True).first()
         selected = set(self.request.GET.getlist("services"))
         if service:
             selected.add(str(service.pk))
@@ -154,8 +137,17 @@ class CheckoutView(AvailabilityContextMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         services = context["form"].fields["services"].queryset
-        selected_services = list(services.filter(pk__in=self.request.GET.getlist("services")))
+        selected_ids = self.request.POST.getlist("services") or self.request.GET.getlist("services")
+        selected_services = list(services.filter(pk__in=selected_ids))
         context["services"] = services
+        context["service_options"] = [
+            {
+                "service": service,
+                "image": service.display_image(),
+                "selected": str(service.pk) in selected_ids,
+            }
+            for service in services
+        ]
         context["selected_services"] = selected_services
         context["preview"] = self._build_preview(selected_services)
         context["services_url"] = (

@@ -1,108 +1,178 @@
-# WH Booking · Prueba Técnica
+# WH Booking · Prueba Tecnica Wynwood
 
-Proyecto Django para el flujo completo de reserva de una propiedad en Wynwood House.
-
-## Incluye
-
-- Home page responsive inspirada en el Figma de WH.
-- Buscador por ciudad, fechas y huéspedes.
-- Resultados con filtros, cards y panel visual tipo mapa.
-- Detalle de propiedad con galería, amenities y formulario de disponibilidad.
-- Checkout con registro manual, email único y validadores de contraseña.
-- Pago simulado, reserva confirmada y correo de confirmación.
-- Admin para ciudades, propiedades, imágenes, servicios, reservas y pagos.
-- Optimización automática de imágenes a WebP con máximo 1200px.
-- Seed de datos demo.
-- Endpoints DRF ligeros para propiedades y reservas del usuario.
+Aplicacion Django para revisar el flujo de reserva de una propiedad: home, busqueda, resultados, detalle, servicios adicionales, checkout, pago simulado, confirmacion y APIs DRF.
 
 ## Stack
 
 - Python 3.11+
 - Django 5.2
-- PostgreSQL como base principal
-- SQLite como fallback para revisión rápida
-- Bootstrap 5 + DTL
-- Pillow para optimización de imágenes
+- Django REST Framework
+- SQLite para revision local rapida
+- PostgreSQL soportado via `.env`
+- Pillow para optimizacion de imagenes WebP
+- Pytest para pruebas
 
-## Instalación
+## Instalacion
+
+### Windows PowerShell
+
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements/dev.txt
+Copy-Item .env.example .env
+```
+
+### Git Bash o shells Unix
 
 ```bash
-cd /Users/jeamp/Documents/Proyectos/Wynwood
-python3 -m venv .venv
-source .venv/bin/activate
+python -m venv venv
+source venv/bin/activate
+python -m pip install --upgrade pip
 pip install -r requirements/dev.txt
 cp .env.example .env
 ```
 
-## Configuración PostgreSQL
+## Configuracion local con SQLite
 
-Edita `.env`:
-
-```bash
-SECRET_KEY=change-me
-DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
-DB_ENGINE=django.db.backends.postgresql
-DB_NAME=wynwood
-DB_USER=postgres
-DB_PASSWORD=tu_password
-DB_HOST=localhost
-DB_PORT=5432
-EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
-DEFAULT_FROM_EMAIL=reservas@wynwood-house.test
-```
-
-Crea la base de datos:
+`.env.example` ya viene configurado para SQLite. Con esa configuracion:
 
 ```bash
-createdb wynwood
 python manage.py migrate
 python manage.py seed_demo_data
 python manage.py createsuperuser
 python manage.py runserver
 ```
 
-## Fallback SQLite
+Abre `http://127.0.0.1:8000/` y prueba una reserva con fechas futuras. El seed carga propiedades, servicios, contenido administrable de la home e imagenes demo. Tambien repara imagenes de propiedades si la base apunta a archivos que ya no existen en `media/`.
 
-Para revisar sin configurar PostgreSQL, usa:
+## Configuracion con PostgreSQL
 
-```bash
-DB_ENGINE=django.db.backends.sqlite3 DB_NAME=db.sqlite3 python manage.py migrate
-DB_ENGINE=django.db.backends.sqlite3 DB_NAME=db.sqlite3 python manage.py seed_demo_data
-DB_ENGINE=django.db.backends.sqlite3 DB_NAME=db.sqlite3 python manage.py runserver
+Edita `.env`:
+
+```env
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=wynwood
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_HOST=localhost
+DB_PORT=5432
 ```
 
-## Flujo De Prueba
+Crea la base y ejecuta la preparacion:
 
-1. Abre `http://127.0.0.1:8000/`.
-2. Busca una ciudad, fechas futuras y huéspedes.
-3. Entra al detalle de una propiedad.
-4. Selecciona fechas disponibles.
-5. Completa checkout con un correo nuevo y una contraseña segura.
-6. Confirma el pago simulado.
-7. Revisa la pantalla de confirmación y el correo en consola.
+```bash
+createdb wynwood
+python manage.py migrate
+python manage.py seed_demo_data
+```
+
+## Variables de entorno
+
+Variables principales:
+
+```env
+SECRET_KEY=change-me
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+DB_ENGINE=django.db.backends.sqlite3
+DB_NAME=db.sqlite3
+EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
+DEFAULT_FROM_EMAIL=reservas@wynwood-house.test
+```
+
+## Despliegue en Railway
+
+Para desplegar en Railway, prepara el repositorio con los siguientes archivos y ajustes:
+
+- `requirements.txt` en la raíz del proyecto.
+- `runtime.txt` con la versión de Python.
+- `Procfile` para iniciar el servidor con `gunicorn`.
+- Variables de entorno configuradas en Railway.
+
+### Variables de entorno recomendadas
+
+- `DJANGO_SETTINGS_MODULE=config.settings.base`
+- `DEBUG=False`
+- `SECRET_KEY=<tu-secret-key-segura>`
+- `ALLOWED_HOSTS=<tu-app>.railway.app`
+- `DB_ENGINE=django.db.backends.postgresql`
+- `DB_NAME=<db-name>`
+- `DB_USER=<db-user>`
+- `DB_PASSWORD=<db-password>`
+- `DB_HOST=<db-host>`
+- `DB_PORT=<db-port>`
+- `EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend`
+- `DEFAULT_FROM_EMAIL=reservas@wynwood-house.test`
+
+### Comandos de despliegue
+
+En Railway, configura el comando de inicio como:
+
+```bash
+gunicorn config.wsgi --bind 0.0.0.0:$PORT
+```
+
+Y asegura que antes del despliegue se ejecuten:
+
+```bash
+python manage.py migrate
+python manage.py collectstatic --noinput
+```
+
+### Nota sobre media
+
+El almacenamiento de `media/` en Railway es efímero. Las imágenes de demo incluidas en el repositorio funcionarán, pero las subidas no se mantendrán entre reinicios o nuevos despliegues.
+
+## Flujo de prueba
+
+1. Entra a `http://127.0.0.1:8000/`.
+2. Busca ciudad, fechas futuras y huespedes.
+3. Abre una propiedad, por ejemplo `/properties/modern-duplex-parque-virrey/`.
+4. Selecciona fechas disponibles y continua a servicios.
+5. Agrega servicios opcionales o continua al checkout.
+6. Registra un correo nuevo, confirma el pago simulado y revisa la confirmacion.
 
 ## Endpoints
 
+Versionados recomendados:
+
+- `GET /api/v1/properties/`
+- `GET /api/v1/properties/<slug>/`
+- `GET /api/v1/bookings/my-bookings/`
+- `GET /api/v1/bookings/my-bookings/<id>/`
+
+Rutas legacy mantenidas por compatibilidad:
+
 - `GET /properties/api/properties/`
 - `GET /properties/api/properties/<slug>/`
-- `GET /api/my-bookings/` requiere sesión/auth DRF
-- `GET /api/my-bookings/<id>/` requiere sesión/auth DRF
+- `GET /api/my-bookings/`
+- `GET /api/my-bookings/<id>/`
 
-## Tests
+Las rutas de reservas requieren autenticacion.
+
+## Verificacion
 
 ```bash
+python manage.py check
+python manage.py makemigrations --check --dry-run
+python manage.py migrate
+python manage.py seed_demo_data
 pytest -q
 ```
 
-Cobertura funcional actual:
+Health checks manuales:
 
-- Validaciones de fechas, capacidad y solapamiento de reservas.
-- Cálculo de totales.
-- Conversión de imágenes a WebP.
-- Home, búsqueda, detalle, checkout y email.
-- Rechazo de email duplicado.
+- Home: `http://127.0.0.1:8000/`
+- Resultados: `http://127.0.0.1:8000/properties/search/`
+- Detalle demo: `http://127.0.0.1:8000/properties/modern-duplex-parque-virrey/`
+- API propiedades: `http://127.0.0.1:8000/api/v1/properties/`
 
-## Notas De Diseño
+## Admin
 
-El Figma/prototipo fue accesible desde navegador. La implementación replica sus señales principales: logo Wynwood, promo bar celeste, hero fotográfico, titular condensado, buscador horizontal, resultados con cards y detalle/checkout con resumen lateral.
+```bash
+python manage.py createsuperuser
+```
+
+Luego entra a `http://127.0.0.1:8000/admin/` para administrar ciudades, propiedades, imagenes, servicios, reservas, pagos y contenido de landing.

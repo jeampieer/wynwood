@@ -1,0 +1,564 @@
+.wh-results,
+.wh-detail,
+.wh-checkout,
+.wh-service-step,
+.wh-auth,
+.wh-confirmation {
+  padding: 3.375rem 4rem 5rem;
+}
+
+.wh-filter-bar {
+  display: grid;
+  grid-template-columns: 2.625rem 1.2fr 1.6fr 1fr auto;
+  width: 100%;
+  margin-bottom: 1.375rem;
+  gap: 0.75rem;
+  background: var(--wh-white);
+}
+
+.wh-filter-bar label {
+  display: flex;
+  min-height: 2.625rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.625rem;
+  border-bottom: 1px solid var(--wh-black);
+  font-size: 0.6875rem;
+}
+
+.wh-filter-grid-icon {
+  display: grid;
+  min-height: 2.625rem;
+  place-items: center;
+  border: 1px solid var(--wh-black);
+  border-radius: 0.3125rem;
+}
+
+.wh-filter-bar select,
+.wh-filter-bar input {
+  min-height: 2.625rem;
+  border: 0;
+  padding: 0;
+}
+
+.wh-filter-bar button {
+  min-height: 2.625rem;
+  border-radius: 62.4375rem;
+  padding: 0 1.375rem;
+}
+
+.wh-results-layout {
+  display: grid;
+  grid-template-columns: 1.08fr .92fr;
+  gap: 1.125rem;
+}
+
+.wh-results-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.125rem;
+}
+
+.wh-map-panel {
+  position: sticky;
+  top: 1.5rem;
+  display: grid;
+  min-height: 32.5rem;
+  align-content: center;
+  gap: 0.625rem;
+  padding: 2.25rem;
+  background: url("../../img/figma/map.webp") center/cover no-repeat;
+  border: 1px solid var(--wh-line);
+}
+
+.wh-map-panel span,
+.wh-map-panel strong {
+  display: none;
+}
+
+.wh-detail,
+.wh-checkout,
+.wh-service-step {
+  background: #e9e8e6;
+}
+
+.wh-checkout {
+  background: var(--wh-white);
+}
+
+.wh-detail-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  margin-bottom: 2.125rem;
+  font-size: 0.6875rem;
+}
+
+.wh-detail-top nav {
+  display: flex;
+  justify-content: end;
+  gap: 1.125rem;
+}
+
+.wh-breadcrumb {
+  max-width: 48.75rem;
+  margin: 0 auto 1.5rem;
+  color: var(--wh-muted);
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+.wh-gallery {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 0.875rem;
+  max-width: 48.75rem;
+  margin: 0 auto 2.25rem;
+}
+
+.wh-gallery img,
+.wh-gallery .wh-image-placeholder {
+  width: 100%;
+  height: 9.625rem;
+  object-fit: cover;
+}
+
+.wh-gallery img:first-child,
+.wh-gallery .wh-image-placeholder:first-child {
+  grid-row: span 2;
+  height: 20.125rem;
+}
+
+.wh-image-placeholder,
+.wh-summary-placeholder {
+  background: #d7d2cb url("../../img/figma/property-card-1.webp") center/cover no-repeat;
+}
+
+.wh-detail-layout,
+.wh-checkout-layout {
+  display: grid;
+  grid-template-columns: 1fr 20rem;
+  gap: 3rem;
+  align-items: start;
+  max-width: 48.75rem;
+  margin: 0 auto;
+}
+
+.wh-detail-layout article > p:not(.wh-location) {
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--wh-muted);
+}
+
+.wh-specs,
+.wh-amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-top: 1.125rem;
+  text-transform: uppercase;
+}
+
+.wh-specs span,
+.wh-amenities span {
+  border-right: 1px solid var(--wh-muted);
+  padding-right: 0.625rem;
+  font-size: 0.6875rem;
+}
+
+.wh-booking-card,
+.wh-summary {
+  background: var(--wh-white);
+  padding: 1.5rem;
+}
+
+.wh-booking-card {
+  border-radius: 1.625rem 1.625rem 0 0;
+}
+
+.wh-summary {
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .06);
+}
+
+.wh-tabs {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 1.125rem;
+}
+
+.wh-booking-card label,
+.wh-checkout label {
+  display: grid;
+  gap: 0.375rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.75rem;
+}
+
+.wh-booking-card input,
+.wh-checkout input,
+.wh-checkout select,
+.wh-addon-form input,
+.wh-addon-form select,
+.wh-addon-form textarea {
+  border: 1px solid var(--wh-line);
+  background: var(--wh-white);
+}
+
+.wh-booking-card button {
+  width: 100%;
+  min-height: 2.875rem;
+  margin-top: 0.75rem;
+  border-radius: 62.4375rem;
+}
+
+.wh-checkout-form h1,
+.wh-checkout-form h2,
+.wh-service-step h1 {
+  margin: 0 0 0.875rem;
+  font-family: "Helvetica WH", Helvetica, Arial, sans-serif;
+  font-size: 1.125rem;
+  letter-spacing: 0.5rem;
+}
+
+.wh-checkout-form h1 {
+  font-size: 1.1875rem;
+}
+
+.wh-checkout-form h2 {
+  margin-top: 2.125rem;
+}
+
+.wh-summary h2 {
+  margin: 0 0 0.375rem;
+  font-family: "Helvetica WH", Helvetica, Arial, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+.wh-checkout-heading-row {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.125rem;
+}
+
+.wh-checkout-heading-row a {
+  border-bottom: 1px solid var(--wh-black);
+  padding-bottom: 0.1875rem;
+  text-transform: uppercase;
+}
+
+.wh-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.wh-form-alert,
+.wh-password-feedback {
+  margin: 0 0 1rem;
+  border: 1px solid #d28c85;
+  background: #fff4f2;
+  color: #8f1d14;
+  padding: 0.75rem 0.875rem;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.wh-password-feedback {
+  grid-column: 1 / -1;
+  margin: -0.25rem 0 0.25rem;
+}
+
+.wh-password-feedback[data-tone="success"] {
+  border-color: #8ab58b;
+  background: #f0f8f0;
+  color: #245d2b;
+}
+
+.wh-field-error input,
+.wh-input-invalid {
+  border-color: #b3261e !important;
+  box-shadow: 0 0 0 2px rgba(179, 38, 30, .12);
+}
+
+.wh-services {
+  display: grid;
+  gap: 0.875rem;
+  margin-top: 1.375rem;
+}
+
+.wh-service-row {
+  display: grid;
+  grid-template-columns: 9.375rem auto 1fr;
+  align-items: center;
+  gap: 1.125rem;
+  min-height: 5.625rem;
+  margin: 0;
+  background: #fafafa;
+  padding: 0 1.125rem 0 0;
+}
+
+.wh-service-row img {
+  width: 9.375rem;
+  height: 5.625rem;
+  object-fit: cover;
+}
+
+.wh-service-row input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  min-height: 1.25rem;
+  margin: 0;
+  accent-color: var(--wh-black);
+}
+
+.wh-payment-method {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid var(--wh-black);
+  border-bottom-width: 3px;
+  padding: 1rem;
+  background: #fff;
+}
+
+.wh-payment-method::before {
+  content: "";
+  width: 0.875rem;
+  height: 0.875rem;
+  border: 4px solid var(--wh-black);
+  border-radius: 50%;
+}
+
+.wh-payment-method::after {
+  content: "+";
+  font-size: 1.125rem;
+}
+
+.wh-primary {
+  width: 100%;
+  min-height: 3.125rem;
+  margin-top: 1.5rem;
+  border-radius: 62.4375rem;
+}
+
+.wh-summary img {
+  width: 5.5rem;
+  height: 4.5rem;
+  object-fit: cover;
+  float: left;
+  margin: 0 0.875rem 0.625rem 0;
+}
+
+.wh-summary-placeholder {
+  float: left;
+  width: 5.5rem;
+  height: 4.5rem;
+  margin: 0 0.875rem 0.625rem 0;
+}
+
+.wh-summary dl,
+.wh-confirmation dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.625rem;
+  clear: both;
+}
+
+.wh-step-kicker {
+  margin: 0 0 1.125rem;
+  color: var(--wh-muted);
+  letter-spacing: 0.375rem;
+  text-transform: uppercase;
+}
+
+.wh-service-step-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20rem;
+  gap: 3rem;
+  max-width: 56.25rem;
+  margin: 0 auto;
+}
+
+.wh-service-step h1,
+.wh-addon-form h1 {
+  max-width: 40rem;
+  font-family: "Acumin WH", Impact, "Arial Narrow", sans-serif;
+  font-size: 3.375rem;
+  line-height: .84;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.wh-step-intro,
+.wh-addon-form > p:not(.wh-step-kicker) {
+  max-width: 32.5rem;
+  margin: 0 0 1.75rem;
+  color: #55514b;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.wh-service-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.875rem;
+}
+
+.wh-service-option {
+  display: grid;
+  grid-template-columns: 10.75rem minmax(0, 1fr) auto;
+  align-items: stretch;
+  min-height: 7rem;
+  background: var(--wh-white);
+  border: 1px solid #dedbd6;
+}
+
+.wh-service-option img {
+  width: 10.75rem;
+  height: 7rem;
+  object-fit: cover;
+}
+
+.wh-service-option div {
+  display: grid;
+  align-content: center;
+  gap: 0.3125rem;
+  padding: 1rem 1.125rem;
+}
+
+.wh-service-option h2 {
+  margin: 0;
+  font-family: "Helvetica WH", Helvetica, Arial, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.wh-service-option p,
+.wh-service-option span {
+  margin: 0;
+  color: var(--wh-muted);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+}
+
+.wh-service-option a {
+  display: grid;
+  min-width: 7rem;
+  place-items: center;
+  align-self: center;
+  margin-right: 1.125rem;
+  border: 1px solid var(--wh-black);
+  border-radius: 62.4375rem;
+  padding: 0.6875rem 1.125rem;
+  text-transform: uppercase;
+}
+
+.wh-step-summary {
+  position: sticky;
+  top: 1.5rem;
+}
+
+.wh-summary-action {
+  display: grid;
+  min-height: 2.875rem;
+  place-items: center;
+  margin-top: 1.375rem;
+  border-radius: 62.4375rem;
+  text-align: center;
+}
+
+.wh-addon-layout {
+  display: grid;
+  grid-template-columns: .95fr 1.05fr;
+  max-width: 56.25rem;
+  margin: 0 auto;
+  background: var(--wh-white);
+}
+
+.wh-addon-media {
+  min-height: 38.75rem;
+  background: #d8d1c8;
+}
+
+.wh-addon-media img {
+  width: 100%;
+  height: 100%;
+  min-height: 38.75rem;
+  object-fit: cover;
+}
+
+.wh-addon-form {
+  display: grid;
+  align-content: center;
+  gap: 0.75rem;
+  padding: 3.5rem;
+}
+
+.wh-addon-form label {
+  display: grid;
+  gap: 0.375rem;
+  color: var(--wh-muted);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+}
+
+.wh-addon-form input,
+.wh-addon-form select,
+.wh-addon-form textarea {
+  width: 100%;
+  min-height: 2.875rem;
+  padding: 0.75rem 0.875rem;
+  color: var(--wh-ink);
+  font: inherit;
+  text-transform: none;
+}
+
+.wh-addon-form textarea {
+  resize: vertical;
+}
+
+.wh-transport-layout {
+  grid-template-columns: 1.05fr .95fr;
+}
+
+.errorlist {
+  margin: 0.25rem 0 0;
+  padding: 0;
+  color: #b3261e;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  list-style: none;
+}
+
+.wh-summary dt,
+.wh-confirmation dt {
+  color: var(--wh-muted);
+  font-weight: 400;
+}
+
+.wh-confirmation {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+}
+
+.wh-confirmation > div,
+.wh-auth form {
+  width: min(38.75rem, 100%);
+  padding: 2.5rem;
+  background: var(--wh-soft);
+}
+
+.wh-auth form {
+  margin: 0 auto;
+}
+
+.wh-auth input {
+  width: 100%;
+  min-height: 2.75rem;
+}

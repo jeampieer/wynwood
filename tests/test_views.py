@@ -3,9 +3,11 @@ from datetime import timedelta
 import pytest
 from django.urls import reverse
 from django.utils import timezone
+from django.core.management import call_command
 
 from applications.accounts.models import User
-from applications.bookings.models import ExtraService
+from applications.bookings.models import ExtraService, ExtraServiceTypeChoices
+from applications.pages.models import LandingSection
 from applications.properties.models import City, Property
 
 
@@ -33,9 +35,48 @@ def property_obj(db):
 @pytest.mark.django_db
 def test_home_page_loads(client, property_obj):
     response = client.get(reverse("pages:home"))
+    content = response.content.decode()
 
     assert response.status_code == 200
-    assert b"HOME EXPERIENCE" in response.content
+    assert "HOME EXPERIENCE" in content
+    assert 'data-promo-countdown' in content
+    assert "10% de descuento en estadías seleccionadas" in content
+    assert "Reservar ahora" in content
+
+
+@pytest.mark.django_db
+def test_home_page_uses_landing_content_from_database(client, property_obj):
+    LandingSection.objects.create(
+        section_type=LandingSection.HERO,
+        eyebrow_es="Texto administrable",
+        eyebrow_en="Managed copy",
+        title_es="TITULAR CMS",
+        title_en="CMS HEADLINE",
+    )
+
+    response = client.get(reverse("pages:home"))
+
+    assert response.status_code == 200
+    assert "TITULAR CMS" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_home_page_renders_english_copy(client, property_obj):
+    LandingSection.objects.create(
+        section_type=LandingSection.FEATURED,
+        title_es="Propiedades desde DB",
+        title_en="DB featured homes",
+        body_es="Texto ES",
+        body_en="English body",
+    )
+    session = client.session
+    session["site_language"] = "en"
+    session.save()
+
+    response = client.get(reverse("pages:home"))
+
+    assert response.status_code == 200
+    assert "DB featured homes" in response.content.decode()
 
 
 @pytest.mark.django_db
@@ -59,10 +100,46 @@ def test_detail_posts_available_dates_redirects_to_services(client, property_obj
 
 
 @pytest.mark.django_db
+def test_detail_shows_field_errors_for_invalid_dates(client, property_obj):
+    today = timezone.localdate()
+    response = client.post(
+        property_obj.get_absolute_url(),
+        {"check_in": today, "check_out": today, "guests": 1},
+    )
+
+    assert response.status_code == 200
+    assert "La salida debe ser posterior" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_detail_renders_fallback_when_property_has_no_images(client, property_obj):
+    response = client.get(property_obj.get_absolute_url())
+
+    assert response.status_code == 200
+    assert "wh-image-placeholder" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_seeded_property_detail_renders_media_images(client, settings, tmp_path):
+    settings.MEDIA_ROOT = tmp_path
+    call_command("seed_demo_data")
+    response = client.get(
+        reverse("properties:detail", kwargs={"slug": "modern-duplex-parque-virrey"})
+    )
+    content = response.content.decode()
+
+    assert response.status_code == 200
+    assert content.count("/media/properties/images/") >= 3
+    assert "wh-image-placeholder" not in content
+
+
+@pytest.mark.django_db
 def test_services_page_loads_with_valid_availability(client, property_obj):
     start = timezone.localdate() + timedelta(days=3)
     url = reverse("bookings:services", kwargs={"slug": property_obj.slug})
-    response = client.get(f"{url}?check_in={start}&check_out={start + timedelta(days=2)}&guests=1")
+    response = client.get(
+        f"{url}?check_in={start}&check_out={start + timedelta(days=2)}&guests=1"
+    )
 
     assert response.status_code == 200
     assert "BIENVENIDO A WYNWOOD HOUSE" in response.content.decode()
@@ -70,7 +147,11 @@ def test_services_page_loads_with_valid_availability(client, property_obj):
 
 @pytest.mark.django_db
 def test_flexible_checkin_redirects_to_checkout_with_service(client, property_obj):
-    ExtraService.objects.create(name="Check-in & Check-out flexible", price=28)
+    ExtraService.objects.create(
+        name="Check-in & Check-out flexible",
+        service_type=ExtraServiceTypeChoices.CHECKIN,
+        price=28,
+    )
     start = timezone.localdate() + timedelta(days=3)
     url = reverse("bookings:flexible-checkin", kwargs={"slug": property_obj.slug})
     response = client.post(
@@ -85,7 +166,11 @@ def test_flexible_checkin_redirects_to_checkout_with_service(client, property_ob
 
 @pytest.mark.django_db
 def test_transport_redirects_to_checkout_with_service(client, property_obj):
-    ExtraService.objects.create(name="Servicio de transporte", price=50)
+    ExtraService.objects.create(
+        name="Servicio de transporte",
+        service_type=ExtraServiceTypeChoices.TRANSPORT,
+        price=50,
+    )
     start = timezone.localdate() + timedelta(days=3)
     url = reverse("bookings:transport", kwargs={"slug": property_obj.slug})
     response = client.post(
@@ -140,3 +225,79 @@ def test_checkout_rejects_duplicate_email(client, property_obj):
 
     assert response.status_code == 200
     assert "Ya existe una cuenta" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_checkout_rejects_password_mismatch(client, property_obj):
+    start = timezone.localdate() + timedelta(days=3)
+    url = reverse("bookings:checkout", kwargs={"slug": property_obj.slug})
+    response = client.post(
+        f"{url}?check_in={start}&check_out={start + timedelta(days=2)}&guests=1",
+        {
+            "email": "mismatch@example.com",
+            "full_name": "Mismatch Guest",
+            "password1": "StrongPass123",
+            "password2": "DifferentPass123",
+        },
+    )
+
+    assert response.status_code == 200
+    assert "Las contraseñas no coinciden" in response.content.decode()
+    assert not User.objects.filter(email="mismatch@example.com").exists()
+
+
+@pytest.mark.django_db
+def test_properties_api_v1_uses_standard_response(client, property_obj):
+    response = client.get("/api/v1/properties/")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["success"] is True
+    assert payload["data"][0]["slug"] == property_obj.slug
+
+
+@pytest.mark.django_db
+def test_my_bookings_api_v1_requires_authentication(client):
+    response = client.get("/api/v1/bookings/my-bookings/")
+
+    assert response.status_code in {401, 403}
+
+
+@pytest.mark.django_db
+def test_extra_service_type_controls_service_option(client, property_obj):
+    service = ExtraService.objects.create(
+        name="Nombre sin palabra clave",
+        service_type=ExtraServiceTypeChoices.TRANSPORT,
+        price=50,
+    )
+    start = timezone.localdate() + timedelta(days=3)
+    url = reverse("bookings:services", kwargs={"slug": property_obj.slug})
+    response = client.get(
+        f"{url}?check_in={start}&check_out={start + timedelta(days=2)}&guests=1"
+    )
+
+    assert response.status_code == 200
+    assert service.name in response.content.decode()
+    assert (
+        reverse("bookings:transport", kwargs={"slug": property_obj.slug})
+        in response.content.decode()
+    )
+
+
+@pytest.mark.django_db
+def test_checkout_service_images_follow_service_type(client, property_obj):
+    service = ExtraService.objects.create(
+        name="Traslado premium",
+        service_type=ExtraServiceTypeChoices.TRANSPORT,
+        price=50,
+    )
+    start = timezone.localdate() + timedelta(days=3)
+    url = reverse("bookings:checkout", kwargs={"slug": property_obj.slug})
+    response = client.get(
+        f"{url}?check_in={start}&check_out={start + timedelta(days=2)}&guests=1&services={service.pk}"
+    )
+    content = response.content.decode()
+
+    assert response.status_code == 200
+    assert "img/figma/service-transport.webp" in content
+    assert "img/figma/service-checkin.webp" not in content

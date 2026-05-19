@@ -1,8 +1,22 @@
+# Environments
 .env
 .venv/
+venv/
+
+# Python
 __pycache__/
 *.pyc
 db.sqlite3
-# media/
+.pytest_cache/
+
+# Static / build
 static/
+*.log
+.coverage
+coverage.xml
+htmlcov/
+pip-wheel-metadata/
+*.egg-info/
+.python-version
 .DS_Store
+Thumbs.db

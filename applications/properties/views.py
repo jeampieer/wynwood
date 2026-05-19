@@ -57,7 +57,7 @@ class PropertyDetailView(DetailView):
             "check_out": self.request.GET.get("check_out"),
             "guests": self.request.GET.get("guests") or 2,
         }
-        context["booking_form"] = BookingAvailabilityForm(property=self.object, data=None, initial=initial)
+        context.setdefault("booking_form", BookingAvailabilityForm(property=self.object, data=None, initial=initial))
         return context
 
     def post(self, request, *args, **kwargs):

@@ -6,7 +6,8 @@ from core.admin import BaseModelAdmin
 
 @admin.register(ExtraService)
 class ExtraServiceAdmin(BaseModelAdmin):
-    list_display = ("name", "price", "is_active")
+    list_display = ("name", "service_type", "price", "is_active")
+    list_filter = ("service_type", "is_active")
     search_fields = ("name",)
 
 

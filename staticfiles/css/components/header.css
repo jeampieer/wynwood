@@ -1,0 +1,46 @@
+.wh-nav {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+  gap: 1.375rem;
+  min-height: 3.5rem;
+  padding: 0.625rem 2.375rem;
+  background: var(--wh-white);
+}
+
+.wh-brand {
+  font-family: Georgia, serif;
+  font-size: 1.3125rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.wh-brand span {
+  padding-left: 0.125rem;
+}
+
+.wh-links,
+.wh-actions,
+.wh-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.6875rem;
+}
+
+.wh-links {
+  justify-content: center;
+}
+
+.wh-actions form {
+  margin: 0;
+}
+
+.wh-actions button,
+.wh-menu {
+  border: 0;
+  background: none;
+  padding: 0;
+}

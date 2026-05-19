@@ -8,18 +8,36 @@
     <a class="wh-brand" href="{% url 'pages:home' %}">wynwood<span>*</span></a>
     <nav><a href="?lang=en">EN</a> / <a href="?lang=es">ES</a> <a href="{% url 'accounts:login' %}">{{ ui.login }}</a> <a href="#pay">{{ ui.book_now }}</a></nav>
   </div>
-  <nav class="wh-breadcrumb">✶ Colombia / {{ property.city.name }} / {{ property.name }} / Página de pago</nav>
+  <nav class="wh-breadcrumb">✶ {{ property.city.country }} / {{ property.city.name }} / {{ property.name }} / Página de pago</nav>
   <div class="wh-checkout-layout">
-    <form method="post" class="wh-checkout-form">
+    <form method="post" class="wh-checkout-form" data-checkout-form>
       {% csrf_token %}
       <h1>REGISTRO</h1>
       <p>Te enviaremos la confirmación de tu reserva por correo electrónico.</p>
+      {% if form.errors %}
+        <div class="wh-form-alert" role="alert" aria-live="polite">
+          Revisa los campos marcados para continuar con el pago.
+        </div>
+      {% endif %}
       {{ form.non_field_errors }}
       <div class="wh-form-grid">
-        <label>{{ form.email.label }}{{ form.email }}{{ form.email.errors }}</label>
-        <label>{{ form.full_name.label }}{{ form.full_name }}{{ form.full_name.errors }}</label>
-        <label>{{ form.password1.label }}{{ form.password1 }}{{ form.password1.errors }}</label>
-        <label>{{ form.password2.label }}{{ form.password2 }}{{ form.password2.errors }}</label>
+        <label class="{% if form.email.errors %}wh-field-error{% endif %}">
+          {{ form.email.label }}{{ form.email }}{{ form.email.errors }}
+        </label>
+        <label class="{% if form.full_name.errors %}wh-field-error{% endif %}">
+          {{ form.full_name.label }}{{ form.full_name }}{{ form.full_name.errors }}
+        </label>
+        {% if form.password1.is_hidden %}
+          {{ form.password1 }}{{ form.password2 }}
+        {% else %}
+          <label class="{% if form.password1.errors %}wh-field-error{% endif %}">
+            {{ form.password1.label }}{{ form.password1 }}{{ form.password1.errors }}
+          </label>
+          <label class="{% if form.password2.errors %}wh-field-error{% endif %}">
+            {{ form.password2.label }}{{ form.password2 }}{{ form.password2.errors }}
+          </label>
+          <div class="wh-password-feedback" data-password-feedback role="alert" aria-live="polite" hidden></div>
+        {% endif %}
         <label>{{ form.nationality.label }}{{ form.nationality }}</label>
         <label>{{ form.phone.label }}{{ form.phone }}</label>
       </div>
@@ -28,24 +46,29 @@
         <a href="{{ services_url }}">Editar servicios</a>
       </div>
       <div class="wh-services">
-        {% for checkbox in form.services %}
+        {% for option in service_options %}
           <label class="wh-service-row">
-            {% if forloop.counter == 1 %}<img src="{% static 'img/figma/service-checkin.webp' %}" alt="">
-            {% elif forloop.counter == 2 %}<img src="{% static 'img/figma/service-transport.webp' %}" alt="">
-            {% elif forloop.counter == 3 %}<img src="{% static 'img/figma/service-fridge.webp' %}" alt="">
-            {% else %}<img src="{% static 'img/figma/service-crib.webp' %}" alt="">{% endif %}
-            {{ checkbox.tag }}
-            <span>{{ checkbox.choice_label }}</span>
+            <img src="{% static option.image %}" alt="">
+            <input type="checkbox" name="services" value="{{ option.service.pk }}"{% if option.selected %} checked{% endif %}>
+            <span>{{ option.service.name }} · USD {{ option.service.price }}</span>
           </label>
         {% endfor %}
       </div>
       <h2>MÉTODO DE PAGO</h2>
       <div class="wh-payment-method">💳 Pago con tarjeta Débito / Crédito · Simulado</div>
-      <button id="pay" class="wh-primary" type="submit">Pagar y confirmar reserva</button>
+      <button id="pay" class="wh-primary" type="submit" data-pay-button>Pagar y confirmar reserva</button>
     </form>
     <aside class="wh-summary">
       {% with cover=property.cover_image %}
-        {% if cover %}<img src="{{ cover.image.url }}" alt="{{ property.name }}">{% endif %}
+        {% if cover %}
+          <img
+            src="{{ cover.image.url }}"
+            alt="{{ property.name }}"
+            onerror="this.onerror=null;this.src='{% static 'img/figma/property-card-1.webp' %}';"
+          >
+        {% else %}
+          <div class="wh-summary-placeholder"></div>
+        {% endif %}
       {% endwith %}
       <h2>{{ property.name }}</h2>
       <p>{{ property.neighborhood }}, {{ property.city.name }}</p>

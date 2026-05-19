@@ -1,8 +1,13 @@
+{% load static %}
 <article class="wh-property-card">
   <a href="{{ property.get_absolute_url }}">
     {% with cover=property.cover_image %}
       {% if cover %}
-        <img src="{{ cover.image.url }}" alt="{{ cover.alt_text|default:property.name }}">
+        <img
+          src="{{ cover.image.url }}"
+          alt="{{ cover.alt_text|default:property.name }}"
+          onerror="this.onerror=null;this.src='{% static 'img/figma/property-card-1.webp' %}';"
+        >
       {% else %}
         <div class="wh-image-placeholder"></div>
       {% endif %}

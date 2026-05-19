@@ -17,6 +17,9 @@ class SearchForm(forms.Form):
 
     def __init__(self, *args, language="es", **kwargs):
         super().__init__(*args, **kwargs)
+        today = timezone.localdate().isoformat()
+        self.fields["check_in"].widget.attrs["min"] = today
+        self.fields["check_out"].widget.attrs["min"] = today
         if language == "en":
             self.fields["city"].empty_label = "Destination city"
             self.fields["city"].label = "City"

@@ -1,0 +1,33 @@
+.wh-header,
+.wh-promo,
+.wh-hero {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.wh-destinations,
+.wh-featured-section,
+.wh-services-section,
+.wh-events-section,
+.wh-benefits-section,
+.wh-brand-panels,
+.wh-section,
+.wh-split-band,
+.wh-long-stay,
+.wh-invest-banner,
+.wh-press-strip,
+.wh-results,
+.wh-detail,
+.wh-checkout,
+.wh-service-step,
+.wh-auth,
+.wh-confirmation,
+.wh-footer {
+  max-width: 90rem;
+  margin-left: auto;
+  margin-right: auto;
+  background: var(--wh-white);
+}

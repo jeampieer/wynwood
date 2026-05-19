@@ -15,6 +15,9 @@ class BookingAvailabilityForm(forms.Form):
     def __init__(self, *args, property, **kwargs):
         self.property = property
         super().__init__(*args, **kwargs)
+        today = timezone.localdate().isoformat()
+        self.fields["check_in"].widget.attrs["min"] = today
+        self.fields["check_out"].widget.attrs["min"] = today
 
     def clean(self):
         cleaned = super().clean()
@@ -68,6 +71,34 @@ class CheckoutForm(forms.Form):
     def __init__(self, *args, user=None, **kwargs):
         self.user = user
         super().__init__(*args, **kwargs)
+        self.fields["email"].widget.attrs.update(
+            {
+                "autocomplete": "email",
+                "inputmode": "email",
+            }
+        )
+        self.fields["full_name"].widget.attrs.update({"autocomplete": "name"})
+        self.fields["phone"].widget.attrs.update(
+            {
+                "autocomplete": "tel",
+                "inputmode": "tel",
+            }
+        )
+        self.fields["nationality"].widget.attrs.update({"autocomplete": "country-name"})
+        self.fields["password1"].widget.attrs.update(
+            {
+                "autocomplete": "new-password",
+                "data-checkout-password": "primary",
+                "minlength": "8",
+            }
+        )
+        self.fields["password2"].widget.attrs.update(
+            {
+                "autocomplete": "new-password",
+                "data-checkout-password": "confirm",
+                "minlength": "8",
+            }
+        )
         if user and user.is_authenticated:
             self.fields["email"].initial = user.email
             self.fields["full_name"].initial = user.get_full_name() or user.email
@@ -76,6 +107,9 @@ class CheckoutForm(forms.Form):
             self.fields["password1"].widget = forms.HiddenInput()
             self.fields["password2"].widget = forms.HiddenInput()
             self.fields["email"].disabled = True
+        else:
+            self.fields["password1"].required = True
+            self.fields["password2"].required = True
 
     def clean(self):
         cleaned = super().clean()
@@ -84,7 +118,9 @@ class CheckoutForm(forms.Form):
             password2 = cleaned.get("password2")
             if not password1:
                 self.add_error("password1", "Ingresa una contraseña.")
-            if password1 != password2:
+            if not password2:
+                self.add_error("password2", "Confirma tu contraseña.")
+            elif password1 and password1 != password2:
                 self.add_error("password2", "Las contraseñas no coinciden.")
         return cleaned
 

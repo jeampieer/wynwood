@@ -1,0 +1,43 @@
+@font-face {
+  font-family: "Acumin WH";
+  src: url("../../fonts/acumin-extra-condensed-bold.otf") format("opentype");
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: "Helvetica WH";
+  src: url("../../fonts/helvetica-neue-roman.otf") format("opentype");
+}
+
+:root {
+  --wh-black: #050505;
+  --wh-ink: #191919;
+  --wh-muted: #7b7770;
+  --wh-line: #d9d5cf;
+  --wh-soft: #efeeee;
+  --wh-blue: #d9eef1;
+  --wh-white: #fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--wh-white);
+  color: var(--wh-ink);
+  font-family: "Helvetica WH", Helvetica, Arial, sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}

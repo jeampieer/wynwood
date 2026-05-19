@@ -2,7 +2,6 @@ from pathlib import Path
 
 import environ
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env(
@@ -17,17 +16,23 @@ def parse_list_env(name, default=""):
 
 
 SECRET_KEY = env("SECRET_KEY", default="dev-only-secret-key")
-DEBUG = env("DEBUG")
+DEBUG = env("DEBUG", default=False)
 ALLOWED_HOSTS = parse_list_env("ALLOWED_HOSTS", "localhost,127.0.0.1")
 
-INSTALLED_APPS = [
+DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+]
+
+THIRD_PARTY_APPS = [
     "rest_framework",
+]
+
+LOCAL_APPS = [
     "core",
     "applications.accounts",
     "applications.properties",
@@ -35,8 +40,11 @@ INSTALLED_APPS = [
     "applications.pages",
 ]
 
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -89,7 +97,9 @@ else:
 AUTH_USER_MODEL = "accounts.User"
 
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+    },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -100,11 +110,12 @@ TIME_ZONE = "America/Lima"
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "staticfiles"]
 STATIC_ROOT = BASE_DIR / "static"
-MEDIA_URL = "media/"
+MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -112,7 +123,9 @@ LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "pages:home"
 LOGOUT_REDIRECT_URL = "pages:home"
 
-EMAIL_BACKEND = env("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")
+EMAIL_BACKEND = env(
+    "EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
+)
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="reservas@wynwood-house.test")
 
 REST_FRAMEWORK = {

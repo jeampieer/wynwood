@@ -1,3 +1,8 @@
+from collections import defaultdict
+
+from django.db import OperationalError, ProgrammingError
+
+
 UI_COPY = {
     "es": {
         "menu": "Menú",
@@ -41,4 +46,28 @@ def site_language(request):
     return {
         "current_language": language,
         "ui": UI_COPY.get(language, UI_COPY["es"]),
+        "footer_groups": _footer_groups(language),
+        "social_links": _social_links(),
     }
+
+
+def _footer_groups(language):
+    try:
+        from applications.pages.models import FooterLink
+
+        groups = defaultdict(list)
+        links = FooterLink.objects.filter(is_active=True).order_by("position", "id")
+        for link in links:
+            groups[link.group].append({"label": link.label(language), "url": link.url})
+        return dict(groups)
+    except (OperationalError, ProgrammingError):
+        return {}
+
+
+def _social_links():
+    try:
+        from applications.pages.models import SocialLink
+
+        return SocialLink.objects.filter(is_active=True).order_by("position", "id")
+    except (OperationalError, ProgrammingError):
+        return []
