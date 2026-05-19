@@ -17,9 +17,7 @@ def parse_list_env(name, default=""):
 
 SECRET_KEY = env("SECRET_KEY", default="dev-only-secret-key")
 DEBUG = env("DEBUG", default=False)
-ALLOWED_HOSTS = parse_list_env(
-    "ALLOWED_HOSTS", "localhost,127.0.0.1", "wynwood-peach.vercel.app"
-)
+ALLOWED_HOSTS = parse_list_env("ALLOWED_HOSTS", "localhost,127.0.0.1")
 
 DJANGO_APPS = [
     "django.contrib.admin",
