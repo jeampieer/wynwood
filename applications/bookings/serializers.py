@@ -20,7 +20,7 @@ class BookingSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "property",
-            "user",
+            "guest",
             "check_in",
             "check_out",
             "guests",

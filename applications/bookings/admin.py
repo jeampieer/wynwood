@@ -13,9 +13,9 @@ class ExtraServiceAdmin(BaseModelAdmin):
 
 @admin.register(Booking)
 class BookingAdmin(BaseModelAdmin):
-    list_display = ("property", "user", "check_in", "check_out", "guests", "status", "total")
+    list_display = ("property", "guest", "check_in", "check_out", "guests", "status", "total")
     list_filter = ("status", "check_in", "is_active")
-    search_fields = ("property__name", "user__email")
+    search_fields = ("property__name", "guest__email")
     filter_horizontal = ("extra_services",)
 
 
@@ -23,4 +23,4 @@ class BookingAdmin(BaseModelAdmin):
 class PaymentAdmin(BaseModelAdmin):
     list_display = ("reference", "booking", "status", "amount", "created")
     list_filter = ("status", "created")
-    search_fields = ("reference", "booking__user__email", "booking__property__name")
+    search_fields = ("reference", "booking__guest__email", "booking__property__name")

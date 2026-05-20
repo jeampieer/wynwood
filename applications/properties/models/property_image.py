@@ -6,6 +6,7 @@ from django.core.files.base import ContentFile
 from django.db import models
 from PIL import Image
 
+from applications.properties.models.property import Property
 from core.models import BaseModel
 
 
@@ -16,7 +17,7 @@ def upload_property_image(instance, filename):
 
 class PropertyImage(BaseModel):
     property = models.ForeignKey(
-        "properties.Property",
+        Property,
         on_delete=models.CASCADE,
         related_name="images",
         verbose_name="Propiedad",

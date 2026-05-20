@@ -321,7 +321,7 @@ class CheckoutView(AvailabilityContextMixin, FormView):
             return self.form_invalid(form)
         services = list(form.cleaned_data["services"])
         booking = Booking(
-            user=user,
+            guest=user,
             property=self.property,
             check_in=self.availability_form.cleaned_data["check_in"],
             check_out=self.availability_form.cleaned_data["check_out"],
@@ -386,7 +386,7 @@ class CheckoutView(AvailabilityContextMixin, FormView):
                 f"Total: USD {booking.total}\n"
             ),
             from_email=None,
-            recipient_list=[booking.user.email],
+            recipient_list=[booking.guest.email],
             fail_silently=False,
         )
 
@@ -479,7 +479,7 @@ class BookingConfirmationView(DetailView):
         context["confirmation_heading"] = copy["confirmation_heading"].format(
             property=self.object.property.name
         )
-        context["confirmation_sent"] = copy["confirmation_sent"].format(email=self.object.user.email)
+        context["confirmation_sent"] = copy["confirmation_sent"].format(email=self.object.guest.email)
         context["welcome"] = self.welcome_copy.get(language, self.welcome_copy["es"])
         context["hero_image"] = (
             cover.image.url if cover else static("img/figma/property-card-1.webp")

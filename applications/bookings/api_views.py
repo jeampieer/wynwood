@@ -11,7 +11,7 @@ class MyBookingListApiView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Booking.objects.filter(user=self.request.user).select_related("property", "payment")
+        return Booking.objects.filter(guest=self.request.user).select_related("property", "payment")
 
     def list(self, request, *args, **kwargs):
         serializer = self.get_serializer(self.filter_queryset(self.get_queryset()), many=True)
@@ -23,7 +23,7 @@ class MyBookingDetailApiView(RetrieveAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Booking.objects.filter(user=self.request.user).select_related("property", "payment")
+        return Booking.objects.filter(guest=self.request.user).select_related("property", "payment")
 
     def retrieve(self, request, *args, **kwargs):
         serializer = self.get_serializer(self.get_object())

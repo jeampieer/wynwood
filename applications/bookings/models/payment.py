@@ -1,5 +1,6 @@
 from django.db import models
 
+from applications.bookings.models.booking import Booking
 from core.models import BaseModel
 
 
@@ -11,7 +12,7 @@ class PaymentStatusChoices(models.TextChoices):
 
 class Payment(BaseModel):
     booking = models.OneToOneField(
-        "bookings.Booking",
+        Booking,
         on_delete=models.CASCADE,
         related_name="payment",
         verbose_name="Reserva",

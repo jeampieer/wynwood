@@ -39,11 +39,11 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "core",
-    "applications.accounts",
-    "applications.properties",
-    "applications.bookings",
-    "applications.pages",
+    "core.apps.CoreConfig",
+    "applications.accounts.apps.AccountsConfig",
+    "applications.properties.apps.PropertiesConfig",
+    "applications.bookings.apps.BookingsConfig",
+    "applications.pages.apps.PagesConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
+from applications.bookings.models.extra_service import ExtraService
+from applications.properties.models import Property
 from core.models import BaseModel
 
 
@@ -15,20 +17,20 @@ class BookingStatusChoices(models.TextChoices):
 
 
 class Booking(BaseModel):
-    user = models.ForeignKey(
+    guest = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name="bookings",
         verbose_name="Huésped",
     )
     property = models.ForeignKey(
-        "properties.Property",
+        Property,
         on_delete=models.PROTECT,
         related_name="bookings",
         verbose_name="Propiedad",
     )
     extra_services = models.ManyToManyField(
-        "bookings.ExtraService",
+        ExtraService,
         blank=True,
         related_name="bookings",
         verbose_name="Servicios adicionales",

@@ -1,18 +1,20 @@
 from django.db import models
 from django.urls import reverse
 
+from applications.properties.models.amenity import Amenity
+from applications.properties.models.city import City
 from core.models import BaseModel
 
 
 class Property(BaseModel):
     city = models.ForeignKey(
-        "properties.City",
+        City,
         on_delete=models.PROTECT,
         related_name="properties",
         verbose_name="Ciudad",
     )
     amenities = models.ManyToManyField(
-        "properties.Amenity",
+        Amenity,
         related_name="properties",
         blank=True,
         verbose_name="Comodidades",

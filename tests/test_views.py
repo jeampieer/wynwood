@@ -280,7 +280,7 @@ def test_checkout_creates_user_booking_and_payment(client, property_obj, mailout
 
     assert response.status_code == 302
     assert User.objects.filter(email="newguest@example.com").exists()
-    booking = Booking.objects.get(user__email="newguest@example.com")
+    booking = Booking.objects.get(guest__email="newguest@example.com")
     assert booking.payment.status == PaymentStatusChoices.PAID
     assert booking.payment.reference.startswith("WH-")
     assert len(mailoutbox) == 1
@@ -409,6 +409,28 @@ def test_my_bookings_api_v1_requires_authentication(client):
     response = client.get("/api/v1/bookings/my-bookings/")
 
     assert response.status_code in {401, 403}
+
+
+@pytest.mark.django_db
+def test_my_bookings_api_v1_serializes_guest_field(client, property_obj):
+    guest = User.objects.create_user(email="api-guest@example.com", password="StrongPass123")
+    start = timezone.localdate() + timedelta(days=3)
+    booking = Booking.objects.create(
+        guest=guest,
+        property=property_obj,
+        check_in=start,
+        check_out=start + timedelta(days=2),
+        guests=1,
+    )
+    client.force_login(guest)
+
+    response = client.get("/api/v1/bookings/my-bookings/")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["data"][0]["id"] == booking.id
+    assert payload["data"][0]["guest"] == guest.id
+    assert "user" not in payload["data"][0]
 
 
 @pytest.mark.django_db
