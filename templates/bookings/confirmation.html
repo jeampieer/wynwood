@@ -1,20 +1,65 @@
 {% extends "base/site.html" %}
-{% block title %}{{ copy.confirmation_title }} · Wynwood{% endblock %}
+{% load static %}
+{% block title %}{{ booking.property.name }} · Wynwood{% endblock %}
 {% block content %}
 <section class="wh-confirmation">
-  <div>
-    <p>{{ copy.confirmation_title }}</p>
-    <h1>{{ confirmation_heading }}</h1>
-    <p>{{ confirmation_sent }}</p>
-    <dl>
-      <dt>{{ copy.arrival }}</dt><dd>{{ booking.check_in }}</dd>
-      <dt>{{ copy.departure }}</dt><dd>{{ booking.check_out }}</dd>
-      <dt>{{ copy.guests }}</dt><dd>{{ booking.guests }}</dd>
-      <dt>{{ copy.total_paid }}</dt><dd>USD {{ booking.total }}</dd>
-      <dt>{{ copy.reference }}</dt><dd>{{ booking.payment.reference }}</dd>
+  <article class="wh-confirmation-welcome" aria-labelledby="confirmation-welcome-title">
+    <h1 id="confirmation-welcome-title">{{ welcome.hello }}</h1>
+    <p class="wh-confirmation-eyebrow">{{ welcome.eyebrow }}</p>
+    <img
+      class="wh-confirmation-hero"
+      src="{{ hero_image }}"
+      alt="{{ hero_image_alt }}"
+      onerror="this.onerror=null;this.src='{% static 'img/figma/property-card-1.webp' %}';"
+    >
+    <p class="wh-confirmation-copy">{{ welcome.body }}</p>
+    <a class="wh-confirmation-cta" href="https://wa.me/51989256807">{{ welcome.cta }}</a>
+    <div class="wh-confirmation-points">
+      <p>{{ welcome.points_label }}</p>
+      <strong>¡{{ reward_points }} Wynwood Points!</strong>
+      <a href="{% url 'pages:home' %}#benefits">{{ welcome.points_link }}</a>
+    </div>
+  </article>
+
+  <article class="wh-receipt" aria-label="{{ copy.confirmation_title }}">
+    <p class="wh-receipt-kicker">{{ copy.confirmation_title }}</p>
+    <header class="wh-receipt-header">
+      <h1>{{ booking.property.name }}</h1>
+      <address>
+        {{ booking.property.address }},
+        {{ booking.property.neighborhood }},
+        {{ booking.property.city.name }},
+        {{ booking.property.city.country }}
+      </address>
+      <p>{{ date_range }}</p>
+      <p>{{ booking.guests }} {{ copy.people }}</p>
+    </header>
+
+    <dl class="wh-receipt-summary">
+      {% for line in receipt_lines %}
+        <div class="{% if line.is_total %}wh-receipt-total{% endif %}">
+          <dt>{{ line.label }}</dt>
+          <dd>{{ line.amount }}</dd>
+        </div>
+      {% endfor %}
     </dl>
-    <a href="{% url 'pages:home' %}">{{ copy.back_home }}</a>
-  </div>
+
+    <section class="wh-receipt-services" aria-labelledby="confirmation-services-title">
+      <h2 id="confirmation-services-title">Servicios sugeridos</h2>
+      <div class="wh-receipt-service-grid">
+        {% for service in service_cards %}
+          <article class="wh-receipt-service">
+            <img src="{% static service.image %}" alt="{{ service.title }}">
+            <h3>{{ service.title }}</h3>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <footer class="wh-receipt-footer">
+      <p>{{ confirmation_sent }}</p>
+      <strong>wynwood<sup>*</sup>house</strong>
+    </footer>
+  </article>
 </section>
 {% endblock %}
-{% block footer %}{% endblock %}

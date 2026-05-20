@@ -325,6 +325,50 @@
     overflow-wrap: anywhere;
   }
 
+  .wh-confirmation {
+    gap: 3rem;
+    padding: 3rem 1.25rem 4rem;
+  }
+
+  .wh-confirmation-welcome h1 {
+    font-size: 3rem;
+  }
+
+  .wh-confirmation-eyebrow {
+    margin-bottom: 1.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.14rem;
+    overflow-wrap: anywhere;
+  }
+
+  .wh-confirmation-hero {
+    margin-bottom: 1.5rem;
+    aspect-ratio: 4 / 3;
+  }
+
+  .wh-confirmation-cta {
+    width: 100%;
+    max-width: 18rem;
+    padding: 0 1.25rem;
+  }
+
+  .wh-confirmation .wh-receipt h1 {
+    font-size: 1.5rem;
+  }
+
+  .wh-receipt {
+    padding: 2rem 1.25rem;
+  }
+
+  .wh-receipt-service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .wh-receipt-footer {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
   .wh-addon-form {
     padding: 2rem 1.375rem;
   }

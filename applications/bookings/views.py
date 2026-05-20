@@ -6,6 +6,7 @@ from django.contrib.auth import login
 from django.contrib.auth.password_validation import validate_password
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
+from django.templatetags.static import static
 from django.urls import reverse
 from django.views.generic import DetailView, FormView, TemplateView
 
@@ -394,12 +395,132 @@ class BookingConfirmationView(DetailView):
     model = Booking
     template_name = "bookings/confirmation.html"
     context_object_name = "booking"
+    month_names = {
+        "es": (
+            "enero",
+            "febrero",
+            "marzo",
+            "abril",
+            "mayo",
+            "junio",
+            "julio",
+            "agosto",
+            "septiembre",
+            "octubre",
+            "noviembre",
+            "diciembre",
+        ),
+        "en": (
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+        ),
+    }
+    service_cards = (
+        {
+            "title": "Limpieza adicional",
+            "image": "img/confirmation/cleaning.webp",
+        },
+        {
+            "title": "Transporte privado",
+            "image": "img/confirmation/transport.webp",
+        },
+        {
+            "title": "Late check-out",
+            "image": "img/confirmation/late-checkout.webp",
+        },
+        {
+            "title": "Seguro de viajes",
+            "image": "img/confirmation/travel-insurance.webp",
+        },
+    )
+    reward_points = 84
+    welcome_copy = {
+        "es": {
+            "hello": "¡Hola!",
+            "eyebrow": "GRACIAS POR ELEGIR WYNWOOD HOUSE / PARA TU PRÓXIMA ESTADÍA",
+            "body": (
+                "Tu reserva está confirmada. Te estaremos enviando toda la información "
+                "previa a tu llegada por correo electrónico. Si tienes alguna consulta, "
+                "no dudes en contactarnos."
+            ),
+            "cta": "Conversa con nosotros 24/7",
+            "points_label": "CON ESTA RESERVA ESTÁS ACUMULANDO",
+            "points_link": "Descubre tus beneficios",
+        },
+        "en": {
+            "hello": "Hello!",
+            "eyebrow": "THANK YOU FOR CHOOSING WYNWOOD HOUSE / FOR YOUR NEXT STAY",
+            "body": (
+                "Your booking is confirmed. We will send all pre-arrival information "
+                "by email. If you have any questions, contact us anytime."
+            ),
+            "cta": "Chat with us 24/7",
+            "points_label": "WITH THIS BOOKING YOU ARE EARNING",
+            "points_link": "Discover your benefits",
+        },
+    }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         language = self.request.session.get("site_language", "es")
         copy = BOOKING_COPY.get(language, BOOKING_COPY["es"])
+        cover = self.object.property.cover_image
         context["copy"] = copy
-        context["confirmation_heading"] = copy["confirmation_heading"].format(property=self.object.property.name)
+        context["confirmation_heading"] = copy["confirmation_heading"].format(
+            property=self.object.property.name
+        )
         context["confirmation_sent"] = copy["confirmation_sent"].format(email=self.object.user.email)
+        context["welcome"] = self.welcome_copy.get(language, self.welcome_copy["es"])
+        context["hero_image"] = (
+            cover.image.url if cover else static("img/figma/property-card-1.webp")
+        )
+        context["hero_image_alt"] = (
+            cover.alt_text if cover and cover.alt_text else self.object.property.name
+        )
+        context["reward_points"] = self.reward_points
+        context["date_range"] = self._date_range(language)
+        context["nights_label"] = self._nights_label()
+        context["receipt_lines"] = self._receipt_lines()
+        context["service_cards"] = self.service_cards
         return context
+
+    def _date_range(self, language):
+        check_in = self._format_date(self.object.check_in, language)
+        check_out = self._format_date(self.object.check_out, language)
+        return f"{check_in} - {check_out}"
+
+    def _format_date(self, value, language):
+        months = self.month_names.get(language, self.month_names["es"])
+        if language == "en":
+            return f"{months[value.month - 1]} {value.day}, {value.year}"
+        return f"{value.day} de {months[value.month - 1]} de {value.year}"
+
+    def _nights_label(self):
+        nights = self.object.nights()
+        noun = "Noche" if nights == 1 else "Noches"
+        return f"{nights} {noun}"
+
+    def _receipt_lines(self):
+        booking = self.object
+        return [
+            {"label": self._nights_label(), "amount": self._money(booking.subtotal)},
+            {"label": "Tarifa de limpieza", "amount": self._money(booking.cleaning_fee)},
+            {
+                "label": "Descuento Wynwood Points",
+                "amount": f"-{self._money(booking.discount)}",
+            },
+            {"label": "Total", "amount": self._money(booking.total), "is_total": True},
+        ]
+
+    def _money(self, value):
+        return f"USD {value:,.2f}"

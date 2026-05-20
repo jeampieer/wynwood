@@ -12,6 +12,7 @@
         <link rel="stylesheet" href="{% static 'css/site.css' %}" />
     </head>
     <body>
+        {% block header %}
         <header class="wh-header">
             <nav class="wh-nav">
                 <a
@@ -47,6 +48,7 @@
                 </div>
             </nav>
         </header>
+        {% endblock %}
 
         {% if messages %}
         <div class="container wh-messages">

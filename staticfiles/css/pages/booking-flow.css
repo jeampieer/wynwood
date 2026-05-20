@@ -360,8 +360,7 @@
   margin: 0 0.875rem 0.625rem 0;
 }
 
-.wh-summary dl,
-.wh-confirmation dl {
+.wh-summary dl {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 0.625rem;
@@ -535,19 +534,262 @@
   list-style: none;
 }
 
-.wh-summary dt,
-.wh-confirmation dt {
+.wh-summary dt {
   color: var(--wh-muted);
   font-weight: 400;
 }
 
 .wh-confirmation {
   display: grid;
-  min-height: 70vh;
-  place-items: center;
+  justify-items: center;
+  gap: 4.5rem;
+  width: 100%;
+  min-height: auto;
+  padding: 4.5rem 4rem 6rem;
+  background: var(--wh-white);
 }
 
-.wh-confirmation > div,
+.wh-confirmation-welcome {
+  display: grid;
+  justify-items: center;
+  width: min(45rem, 100%);
+  text-align: center;
+}
+
+.wh-confirmation-welcome h1 {
+  margin: 0 0 0.625rem;
+  font-family: "Helvetica WH", Helvetica, Arial, sans-serif;
+  font-size: 5.75rem;
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.wh-confirmation-eyebrow {
+  max-width: 38rem;
+  margin: 0 0 2.25rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.26rem;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+.wh-confirmation-hero {
+  width: min(40rem, 100%);
+  aspect-ratio: 16 / 9;
+  margin: 0 0 2.25rem;
+  object-fit: cover;
+  background: #e2ded8;
+}
+
+.wh-confirmation-copy {
+  width: min(33rem, 100%);
+  margin: 0;
+  color: #4f4b45;
+  line-height: 1.65;
+}
+
+.wh-confirmation-cta {
+  display: inline-flex;
+  justify-self: center;
+  min-height: 2.875rem;
+  align-items: center;
+  justify-content: center;
+  margin: 1.5rem 0 2.25rem;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 1.75rem;
+  background: var(--wh-black);
+  color: var(--wh-white);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.wh-confirmation-points {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+}
+
+.wh-confirmation-points p,
+.wh-confirmation-points strong,
+.wh-confirmation-points a {
+  margin: 0;
+}
+
+.wh-confirmation-points p {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.18rem;
+  text-transform: uppercase;
+}
+
+.wh-confirmation-points strong {
+  font-size: 1.375rem;
+  line-height: 1.2;
+}
+
+.wh-confirmation-points a {
+  justify-self: center;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  color: var(--wh-black);
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 0.1875rem;
+}
+
+.wh-receipt {
+  width: min(52rem, 100%);
+  background: var(--wh-white);
+  padding: 3.5rem 4rem 3rem;
+}
+
+.wh-receipt-kicker {
+  margin: 0 0 1.5rem;
+  color: var(--wh-muted);
+  font-size: 0.6875rem;
+  letter-spacing: 0.25rem;
+  text-transform: uppercase;
+}
+
+.wh-receipt-header {
+  display: grid;
+  gap: 0.5rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--wh-black);
+}
+
+.wh-confirmation .wh-receipt h1 {
+  max-width: 38rem;
+  margin: 0;
+  font-family: "Helvetica WH", Helvetica, Arial, sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.wh-receipt address,
+.wh-receipt-header p,
+.wh-receipt-footer p {
+  margin: 0;
+  color: #4f4b45;
+  font-style: normal;
+  line-height: 1.5;
+}
+
+.wh-receipt-summary {
+  display: grid;
+  gap: 0.875rem;
+  margin: 1.5rem 0 0;
+  padding: 0 0 1.5rem;
+  border-bottom: 1px solid var(--wh-black);
+}
+
+.wh-receipt-summary div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.wh-receipt-summary dt,
+.wh-receipt-summary dd {
+  margin: 0;
+}
+
+.wh-receipt-summary dt {
+  color: #4f4b45;
+  font-weight: 400;
+}
+
+.wh-receipt-summary dd {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.wh-receipt-summary .wh-receipt-total {
+  margin-top: 0.375rem;
+  padding-top: 0.875rem;
+}
+
+.wh-receipt-total dt,
+.wh-receipt-total dd {
+  color: var(--wh-black);
+  font-weight: 700;
+}
+
+.wh-receipt-total dd {
+  border-bottom: 1px solid var(--wh-black);
+  padding-bottom: 0.125rem;
+}
+
+.wh-receipt-services {
+  padding: 2.25rem 0 0;
+}
+
+.wh-receipt-services h2 {
+  margin: 0 0 1rem;
+  font-family: "Helvetica WH", Helvetica, Arial, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.1875rem;
+  text-transform: uppercase;
+}
+
+.wh-receipt-service-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.wh-receipt-service {
+  display: grid;
+  gap: 0.625rem;
+  margin: 0;
+}
+
+.wh-receipt-service img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: #e2ded8;
+}
+
+.wh-receipt-service h3 {
+  margin: 0;
+  color: #4f4b45;
+  font-family: "Helvetica WH", Helvetica, Arial, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.wh-receipt-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.5rem;
+  align-items: end;
+  margin-top: 2.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--wh-line);
+}
+
+.wh-receipt-footer strong {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.wh-receipt-footer sup {
+  font-size: 0.75rem;
+}
+
 .wh-auth form {
   width: min(38.75rem, 100%);
   padding: 2.5rem;

@@ -45,6 +45,7 @@ def test_home_page_loads(client, property_obj):
     assert 'data-date-start' in content
     assert 'data-date-end' in content
     assert 'data-guest-count' in content
+    assert '<section id="benefits" class="wh-benefits-section">' in content
     assert "10% de descuento en estadías seleccionadas" in content
     assert "Reservar ahora" in content
 
@@ -286,6 +287,76 @@ def test_checkout_creates_user_booking_and_payment(client, property_obj, mailout
 
 
 @pytest.mark.django_db
+def test_confirmation_renders_welcome_receipt_and_global_shell(client, property_obj, mailoutbox):
+    start = timezone.localdate() + timedelta(days=3)
+    month_names = (
+        "enero",
+        "febrero",
+        "marzo",
+        "abril",
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre",
+        "noviembre",
+        "diciembre",
+    )
+    checkout_url = reverse("bookings:checkout", kwargs={"slug": property_obj.slug})
+    response = client.post(
+        f"{checkout_url}?check_in={start}&check_out={start + timedelta(days=4)}&guests=2",
+        {
+            "email": "receiptguest@example.com",
+            "full_name": "Receipt Guest",
+            "password1": "StrongPass123",
+            "password2": "StrongPass123",
+            "phone": "+51 999 999 999",
+            "nationality": "Peru",
+        },
+    )
+    confirmation = client.get(response["Location"])
+    content = unescape(confirmation.content.decode())
+
+    assert confirmation.status_code == 200
+    assert '<header class="wh-header">' in content
+    assert '<footer class="wh-footer">' in content
+    assert "¡Hola!" in content
+    assert "GRACIAS POR ELEGIR WYNWOOD HOUSE / PARA TU PRÓXIMA ESTADÍA" in content
+    assert "img/figma/property-card-1.webp" in content
+    assert "Tu reserva está confirmada." in content
+    assert "Conversa con nosotros 24/7" in content
+    assert "https://wa.me/51989256807" in content
+    assert "CON ESTA RESERVA ESTÁS ACUMULANDO" in content
+    assert "¡84 Wynwood Points!" in content
+    assert "Descubre tus beneficios" in content
+    assert "#benefits" in content
+    assert property_obj.name in content
+    assert property_obj.address in content
+    assert property_obj.neighborhood in content
+    assert property_obj.city.name in content
+    assert property_obj.city.country in content
+    assert f"{start.day} de {month_names[start.month - 1]} de {start.year}" in content
+    assert "4 Noches" in content
+    assert "Tarifa de limpieza" in content
+    assert "Descuento Wynwood Points" in content
+    assert "USD 320.00" in content
+    assert "USD 20.00" in content
+    assert "-USD 18.00" in content
+    assert "USD 373.52" in content
+    assert "Impuestos" not in content
+    assert "Limpieza adicional" in content
+    assert "Transporte privado" in content
+    assert "Late check-out" in content
+    assert "Seguro de viajes" in content
+    assert "img/confirmation/cleaning.webp" in content
+    assert "img/confirmation/transport.webp" in content
+    assert "img/confirmation/late-checkout.webp" in content
+    assert "img/confirmation/travel-insurance.webp" in content
+    assert len(mailoutbox) == 1
+
+
+@pytest.mark.django_db
 def test_checkout_rejects_duplicate_email(client, property_obj):
     User.objects.create_user(email="taken@example.com", password="StrongPass123")
     start = timezone.localdate() + timedelta(days=3)
@@ -518,5 +589,6 @@ def test_booking_flow_renders_english_copy(client, property_obj, mailoutbox):
     assert "REGISTRATION" in checkout.content.decode()
     assert "Card payment gateway mock" in checkout.content.decode()
     assert "Booking confirmed" in confirmation.content.decode()
-    assert "Total paid" in confirmation.content.decode()
+    assert "2 Noches" in confirmation.content.decode()
+    assert "Total" in confirmation.content.decode()
     assert len(mailoutbox) == 1
