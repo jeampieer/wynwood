@@ -1,4 +1,5 @@
 from datetime import timedelta
+from html import unescape
 
 import pytest
 from django.urls import reverse
@@ -6,8 +7,9 @@ from django.utils import timezone
 from django.core.management import call_command
 
 from applications.accounts.models import User
-from applications.bookings.models import ExtraService, ExtraServiceTypeChoices
+from applications.bookings.models import Booking, ExtraService, ExtraServiceTypeChoices, PaymentStatusChoices
 from applications.pages.models import LandingSection
+from applications.properties.forms import SearchForm
 from applications.properties.models import City, Property
 
 
@@ -40,6 +42,9 @@ def test_home_page_loads(client, property_obj):
     assert response.status_code == 200
     assert "HOME EXPERIENCE" in content
     assert 'data-promo-countdown' in content
+    assert 'data-date-start' in content
+    assert 'data-date-end' in content
+    assert 'data-guest-count' in content
     assert "10% de descuento en estadías seleccionadas" in content
     assert "Reservar ahora" in content
 
@@ -85,6 +90,75 @@ def test_search_filters_by_guest_capacity(client, property_obj):
 
     assert response.status_code == 200
     assert property_obj.name.encode() not in response.content
+
+
+@pytest.mark.django_db
+def test_footer_renders_search_form(client, property_obj):
+    response = client.get(reverse("pages:home"))
+    content = response.content.decode()
+
+    assert response.status_code == 200
+    assert '<form class="wh-footer-search"' in content
+    assert 'method="get"' in content
+    assert 'action="/properties/search/"' in content
+    assert 'name="check_in"' in content
+    assert 'name="check_out"' in content
+    assert 'name="guests"' in content
+
+
+@pytest.mark.django_db
+def test_footer_preserves_search_values_from_flow_page(client, property_obj):
+    start = timezone.localdate() + timedelta(days=3)
+    response = client.get(
+        property_obj.get_absolute_url(),
+        {
+            "city": property_obj.city.pk,
+            "check_in": start.isoformat(),
+            "check_out": (start + timedelta(days=2)).isoformat(),
+            "guests": "2",
+        },
+    )
+    content = unescape(response.content.decode())
+
+    assert response.status_code == 200
+    assert 'name="city"' in content
+    assert f'value="{property_obj.city.pk}"' in content
+    assert "selected" in content
+    assert "Bogotá" in content
+    assert f'name="check_in" value="{start.isoformat()}"' in content
+    assert f'name="check_out" value="{(start + timedelta(days=2)).isoformat()}"' in content
+    assert 'name="guests" value="2"' in content
+
+
+@pytest.mark.django_db
+def test_search_form_rejects_invalid_date_order():
+    start = timezone.localdate() + timedelta(days=3)
+
+    equal_form = SearchForm(
+        {
+            "check_in": start.isoformat(),
+            "check_out": start.isoformat(),
+        }
+    )
+    before_form = SearchForm(
+        {
+            "check_in": start.isoformat(),
+            "check_out": (start - timedelta(days=1)).isoformat(),
+        }
+    )
+
+    assert not equal_form.is_valid()
+    assert "check_out" in equal_form.errors
+    assert not before_form.is_valid()
+    assert "check_out" in before_form.errors
+
+
+@pytest.mark.django_db
+def test_search_form_rejects_guest_count_below_one():
+    form = SearchForm({"guests": "0"})
+
+    assert not form.is_valid()
+    assert "guests" in form.errors
 
 
 @pytest.mark.django_db
@@ -205,6 +279,9 @@ def test_checkout_creates_user_booking_and_payment(client, property_obj, mailout
 
     assert response.status_code == 302
     assert User.objects.filter(email="newguest@example.com").exists()
+    booking = Booking.objects.get(user__email="newguest@example.com")
+    assert booking.payment.status == PaymentStatusChoices.PAID
+    assert booking.payment.reference.startswith("WH-")
     assert len(mailoutbox) == 1
 
 
@@ -301,3 +378,145 @@ def test_checkout_service_images_follow_service_type(client, property_obj):
     assert response.status_code == 200
     assert "img/figma/service-transport.webp" in content
     assert "img/figma/service-checkin.webp" not in content
+
+
+@pytest.mark.django_db
+def test_search_property_links_preserve_booking_query(client, property_obj):
+    start = timezone.localdate() + timedelta(days=3)
+    response = client.get(
+        reverse("properties:search"),
+        {
+            "city": property_obj.city.pk,
+            "check_in": start.isoformat(),
+            "check_out": (start + timedelta(days=2)).isoformat(),
+            "guests": "1",
+        },
+    )
+    content = unescape(response.content.decode())
+
+    assert response.status_code == 200
+    assert (
+        f'{property_obj.get_absolute_url()}?city={property_obj.city.pk}&check_in={start.isoformat()}'
+        f"&check_out={(start + timedelta(days=2)).isoformat()}&guests=1"
+    ) in content
+
+
+@pytest.mark.django_db
+def test_search_property_links_drop_invalid_city(client, property_obj):
+    start = timezone.localdate() + timedelta(days=3)
+    invalid_city = property_obj.city.pk + 999
+    response = client.get(
+        reverse("properties:search"),
+        {
+            "city": invalid_city,
+            "check_in": start.isoformat(),
+            "check_out": (start + timedelta(days=2)).isoformat(),
+            "guests": "1",
+        },
+    )
+    content = unescape(response.content.decode())
+
+    assert response.status_code == 200
+    assert f"city={invalid_city}" not in content
+    assert (
+        f"{property_obj.get_absolute_url()}?check_in={start.isoformat()}"
+        f"&check_out={(start + timedelta(days=2)).isoformat()}&guests=1"
+    ) in content
+
+
+@pytest.mark.django_db
+def test_detail_preloads_received_dates_and_guests(client, property_obj):
+    start = timezone.localdate() + timedelta(days=3)
+    response = client.get(
+        property_obj.get_absolute_url(),
+        {
+            "check_in": start.isoformat(),
+            "check_out": (start + timedelta(days=2)).isoformat(),
+            "guests": "2",
+        },
+    )
+    content = response.content.decode()
+
+    assert response.status_code == 200
+    assert f'name="check_in" value="{start.isoformat()}"' in content
+    assert f'name="check_out" value="{(start + timedelta(days=2)).isoformat()}"' in content
+    assert 'name="guests" value="2"' in content
+
+
+@pytest.mark.django_db
+def test_booking_flow_preserves_city_dates_and_guests(client, property_obj):
+    start = timezone.localdate() + timedelta(days=3)
+    search = client.get(
+        reverse("properties:search"),
+        {
+            "city": property_obj.city.pk,
+            "check_in": start.isoformat(),
+            "check_out": (start + timedelta(days=2)).isoformat(),
+            "guests": "1",
+        },
+    )
+    search_content = unescape(search.content.decode())
+    detail_url = (
+        f"{property_obj.get_absolute_url()}?city={property_obj.city.pk}"
+        f"&check_in={start.isoformat()}&check_out={(start + timedelta(days=2)).isoformat()}&guests=1"
+    )
+    services = client.post(
+        detail_url,
+        {
+            "city": property_obj.city.pk,
+            "check_in": start.isoformat(),
+            "check_out": (start + timedelta(days=2)).isoformat(),
+            "guests": "1",
+        },
+    )
+    services_url = services["Location"]
+    checkout = client.get(services_url)
+    checkout_url = reverse("bookings:checkout", kwargs={"slug": property_obj.slug})
+
+    assert detail_url in search_content
+    assert f"city={property_obj.city.pk}" in services_url
+    assert f"check_in={start.isoformat()}" in services_url
+    assert f"check_out={(start + timedelta(days=2)).isoformat()}" in services_url
+    assert "guests=1" in services_url
+    assert checkout.status_code == 200
+    assert f"{checkout_url}?check_in={start.isoformat()}" in unescape(checkout.content.decode())
+    assert f"city={property_obj.city.pk}" in unescape(checkout.content.decode())
+
+
+@pytest.mark.django_db
+def test_booking_flow_renders_english_copy(client, property_obj, mailoutbox):
+    session = client.session
+    session["site_language"] = "en"
+    session.save()
+    start = timezone.localdate() + timedelta(days=3)
+    query = f"check_in={start}&check_out={start + timedelta(days=2)}&guests=1"
+
+    home = client.get(reverse("pages:home"))
+    search = client.get(reverse("properties:search"), {"guests": 3})
+    detail = client.get(f"{property_obj.get_absolute_url()}?{query}")
+    services = client.get(f"{reverse('bookings:services', kwargs={'slug': property_obj.slug})}?{query}")
+    checkout_url = reverse("bookings:checkout", kwargs={"slug": property_obj.slug})
+    checkout = client.get(f"{checkout_url}?{query}")
+    submitted = client.post(
+        f"{checkout_url}?{query}",
+        {
+            "email": "englishguest@example.com",
+            "full_name": "English Guest",
+            "password1": "StrongPass123",
+            "password2": "StrongPass123",
+            "phone": "+51 999 999 999",
+            "nationality": "Peru",
+        },
+    )
+    confirmation = client.get(submitted["Location"])
+
+    assert home.status_code == 200
+    assert "Featured properties" in home.content.decode()
+    assert "No availability found" in search.content.decode()
+    assert "Book now" in detail.content.decode()
+    assert "Additional services" in services.content.decode()
+    assert "REGISTRATION" in checkout.content.decode()
+    assert "Card payment gateway mock" in checkout.content.decode()
+    assert "Booking confirmed" in confirmation.content.decode()
+    assert "Total paid" in confirmation.content.decode()
+    assert len(mailoutbox) == 1

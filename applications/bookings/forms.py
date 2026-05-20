@@ -8,16 +8,25 @@ from applications.bookings.models import Booking, ExtraService
 
 
 class BookingAvailabilityForm(forms.Form):
-    check_in = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}), label="Llegada")
-    check_out = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}), label="Salida")
-    guests = forms.IntegerField(min_value=1, label="Huéspedes")
+    check_in = forms.DateField(widget=forms.DateInput(attrs={"type": "date", "data-date-start": ""}), label="Llegada")
+    check_out = forms.DateField(widget=forms.DateInput(attrs={"type": "date", "data-date-end": ""}), label="Salida")
+    guests = forms.IntegerField(
+        min_value=1,
+        widget=forms.NumberInput(attrs={"data-guest-count": "", "min": "1"}),
+        label="Huéspedes",
+    )
 
-    def __init__(self, *args, property, **kwargs):
+    def __init__(self, *args, property, language="es", **kwargs):
         self.property = property
+        self.language = language
         super().__init__(*args, **kwargs)
         today = timezone.localdate().isoformat()
         self.fields["check_in"].widget.attrs["min"] = today
         self.fields["check_out"].widget.attrs["min"] = today
+        if language == "en":
+            self.fields["check_in"].label = "Arrival"
+            self.fields["check_out"].label = "Departure"
+            self.fields["guests"].label = "Guests"
 
     def clean(self):
         cleaned = super().clean()
@@ -25,14 +34,37 @@ class BookingAvailabilityForm(forms.Form):
         check_out = cleaned.get("check_out")
         guests = cleaned.get("guests")
         today = timezone.localdate()
+        messages = {
+            "past_check_in": {
+                "es": "La llegada no puede estar en el pasado.",
+                "en": "Arrival cannot be in the past.",
+            },
+            "past_check_out": {
+                "es": "La salida no puede estar en el pasado.",
+                "en": "Departure cannot be in the past.",
+            },
+            "order": {
+                "es": "La salida debe ser posterior a la llegada.",
+                "en": "Departure must be after arrival.",
+            },
+            "capacity": {
+                "es": "Esta propiedad no admite tantos huéspedes.",
+                "en": "This property does not allow that many guests.",
+            },
+            "unavailable": {
+                "es": "La propiedad no está disponible para esas fechas.",
+                "en": "The property is not available for those dates.",
+            },
+        }
+        language = self.language if self.language in {"es", "en"} else "es"
         if check_in and check_in < today:
-            self.add_error("check_in", "La llegada no puede estar en el pasado.")
+            self.add_error("check_in", messages["past_check_in"][language])
         if check_out and check_out < today:
-            self.add_error("check_out", "La salida no puede estar en el pasado.")
+            self.add_error("check_out", messages["past_check_out"][language])
         if check_in and check_out and check_in >= check_out:
-            self.add_error("check_out", "La salida debe ser posterior a la llegada.")
+            self.add_error("check_out", messages["order"][language])
         if guests and guests > self.property.capacity:
-            self.add_error("guests", "Esta propiedad no admite tantos huéspedes.")
+            self.add_error("guests", messages["capacity"][language])
         if check_in and check_out:
             overlap = Booking.objects.filter(
                 property=self.property,
@@ -41,7 +73,7 @@ class BookingAvailabilityForm(forms.Form):
                 check_out__gt=check_in,
             ).exists()
             if overlap:
-                raise ValidationError("La propiedad no está disponible para esas fechas.")
+                raise ValidationError(messages["unavailable"][language])
         return cleaned
 
     def cleaned_query_params(self):
@@ -68,9 +100,18 @@ class CheckoutForm(forms.Form):
         label="Servicios adicionales",
     )
 
-    def __init__(self, *args, user=None, **kwargs):
+    def __init__(self, *args, user=None, language="es", **kwargs):
         self.user = user
+        self.language = language
         super().__init__(*args, **kwargs)
+        if language == "en":
+            self.fields["email"].label = "Email"
+            self.fields["full_name"].label = "Full name"
+            self.fields["phone"].label = "Phone"
+            self.fields["nationality"].label = "Nationality"
+            self.fields["password1"].label = "Password"
+            self.fields["password2"].label = "Confirm password"
+            self.fields["services"].label = "Additional services"
         self.fields["email"].widget.attrs.update(
             {
                 "autocomplete": "email",
@@ -114,14 +155,24 @@ class CheckoutForm(forms.Form):
     def clean(self):
         cleaned = super().clean()
         if not (self.user and self.user.is_authenticated):
+            language = self.language if self.language in {"es", "en"} else "es"
             password1 = cleaned.get("password1")
             password2 = cleaned.get("password2")
             if not password1:
-                self.add_error("password1", "Ingresa una contraseña.")
+                self.add_error(
+                    "password1",
+                    "Ingresa una contraseña." if language == "es" else "Enter a password.",
+                )
             if not password2:
-                self.add_error("password2", "Confirma tu contraseña.")
+                self.add_error(
+                    "password2",
+                    "Confirma tu contraseña." if language == "es" else "Confirm your password.",
+                )
             elif password1 and password1 != password2:
-                self.add_error("password2", "Las contraseñas no coinciden.")
+                self.add_error(
+                    "password2",
+                    "Las contraseñas no coinciden." if language == "es" else "Passwords do not match.",
+                )
         return cleaned
 
 
@@ -141,6 +192,13 @@ class FlexibleCheckinForm(forms.Form):
         label="Notas para el equipo",
     )
 
+    def __init__(self, *args, language="es", **kwargs):
+        super().__init__(*args, **kwargs)
+        if language == "en":
+            self.fields["arrival_time"].label = "Estimated arrival time"
+            self.fields["departure_time"].label = "Ideal departure time"
+            self.fields["notes"].label = "Notes for the team"
+
 
 class TransportServiceForm(forms.Form):
     TRANSFER_CHOICES = (
@@ -158,3 +216,17 @@ class TransportServiceForm(forms.Form):
         required=False,
         label="Notas para el conductor",
     )
+
+    def __init__(self, *args, language="es", **kwargs):
+        super().__init__(*args, **kwargs)
+        if language == "en":
+            self.fields["transfer_type"].label = "Transfer type"
+            self.fields["transfer_type"].choices = (
+                ("airport_property", "Airport to property"),
+                ("property_airport", "Property to airport"),
+                ("round_trip", "Round trip"),
+            )
+            self.fields["flight_number"].label = "Flight number"
+            self.fields["pickup_address"].label = "Pickup address"
+            self.fields["passengers"].label = "Passengers"
+            self.fields["notes"].label = "Notes for the driver"

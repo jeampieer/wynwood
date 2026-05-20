@@ -1,19 +1,19 @@
 {% extends "base/site.html" %}
-{% block title %}Reserva confirmada · Wynwood{% endblock %}
+{% block title %}{{ copy.confirmation_title }} · Wynwood{% endblock %}
 {% block content %}
 <section class="wh-confirmation">
   <div>
-    <p>Reserva confirmada</p>
-    <h1>Tu estadía en {{ booking.property.name }} quedó lista.</h1>
-    <p>Enviamos la constancia a {{ booking.user.email }}.</p>
+    <p>{{ copy.confirmation_title }}</p>
+    <h1>{{ confirmation_heading }}</h1>
+    <p>{{ confirmation_sent }}</p>
     <dl>
-      <dt>Llegada</dt><dd>{{ booking.check_in }}</dd>
-      <dt>Salida</dt><dd>{{ booking.check_out }}</dd>
-      <dt>Huéspedes</dt><dd>{{ booking.guests }}</dd>
-      <dt>Total pagado</dt><dd>USD {{ booking.total }}</dd>
-      <dt>Referencia</dt><dd>{{ booking.payment.reference }}</dd>
+      <dt>{{ copy.arrival }}</dt><dd>{{ booking.check_in }}</dd>
+      <dt>{{ copy.departure }}</dt><dd>{{ booking.check_out }}</dd>
+      <dt>{{ copy.guests }}</dt><dd>{{ booking.guests }}</dd>
+      <dt>{{ copy.total_paid }}</dt><dd>USD {{ booking.total }}</dd>
+      <dt>{{ copy.reference }}</dt><dd>{{ booking.payment.reference }}</dd>
     </dl>
-    <a href="{% url 'pages:home' %}">Volver al inicio</a>
+    <a href="{% url 'pages:home' %}">{{ copy.back_home }}</a>
   </div>
 </section>
 {% endblock %}

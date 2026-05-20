@@ -43,6 +43,39 @@ def test_property_image_is_converted_to_webp(settings, tmp_path):
 
 
 @pytest.mark.django_db
+def test_property_image_large_webp_is_resized(settings, tmp_path):
+    settings.MEDIA_ROOT = tmp_path
+    city = City.objects.create(name="Lima", country="Perú")
+    prop = Property.objects.create(
+        city=city,
+        name="Large WebP",
+        slug="large-webp",
+        neighborhood="Barranco",
+        address="Calle 1",
+        short_description="Demo",
+        description="Demo",
+        capacity=2,
+        bedrooms=1,
+        beds=1,
+        bathrooms=1,
+        nightly_price=90,
+    )
+    source = Image.new("RGB", (2200, 1400), "#c7d7d1")
+    buffer = BytesIO()
+    source.save(buffer, format="WEBP")
+
+    image = PropertyImage.objects.create(
+        property=prop,
+        image=ContentFile(buffer.getvalue(), name="large-suite.webp"),
+        alt_text="Large suite",
+    )
+
+    optimized = Image.open(image.image.path)
+    assert image.image.name.endswith(".webp")
+    assert max(optimized.size) <= 1200
+
+
+@pytest.mark.django_db
 def test_seed_demo_data_repairs_missing_property_image_files(settings, tmp_path):
     settings.MEDIA_ROOT = tmp_path
     call_command("seed_demo_data")

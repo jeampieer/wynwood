@@ -18,7 +18,7 @@
   <div class="wh-hero-content">
     <h1>{{ copy.headline }}</h1>
     <p>{{ copy.eyebrow }}</p>
-    <form class="wh-search-bar" method="get" action="{% url 'properties:search' %}">
+    <form class="wh-search-bar" method="get" action="{% url 'properties:search' %}" data-language="{{ current_language }}">
       <div class="wh-search-icon" aria-hidden="true">⌕</div>
       <div>{{ form.city }}</div>
       <div class="wh-static-field">⚑ <span>{{ copy.district }}</span></div>
@@ -48,7 +48,7 @@
 
 <section class="wh-featured-section">
   <div class="wh-pill-tabs" aria-label="Property collections">
-    <a href="{% url 'properties:search' %}">Todas las propiedades</a>
+    <a href="{% url 'properties:search' %}">{{ copy.all_properties }}</a>
     <a href="{% url 'properties:search' %}">The Collection*</a>
     <a href="{% url 'properties:search' %}">Casa Wynwood</a>
   </div>
@@ -61,7 +61,7 @@
     {% for property in featured_properties %}
       {% include "properties/_property_card.html" with property=property %}
     {% empty %}
-      <p>Ejecuta <code>python manage.py seed_demo_data</code> para cargar propiedades.</p>
+      <p>{{ copy.empty_featured }}</p>
     {% endfor %}
     </div>
   </div>
@@ -82,14 +82,14 @@
   </div>
 </section>
 
-<section class="wh-events-section">
+<section id="events" class="wh-events-section">
   <div class="wh-events-collage" aria-hidden="true">
     <img src="{% static 'img/homepage/events-food.png' %}" alt="">
   </div>
   <div class="wh-events-copy">
     <h2>{{ copy.events_title }}</h2>
     <p>{{ copy.events_body }}</p>
-    <a href="#">{{ copy.events_cta }}</a>
+    <a href="{% url 'properties:search' %}">{{ copy.events_cta }}</a>
   </div>
 </section>
 
@@ -129,13 +129,13 @@
   </div>
 </section>
 
-<section class="wh-invest-banner">
+<section id="invest" class="wh-invest-banner">
   <img src="{% static 'img/homepage/invest-banner.png' %}" alt="Interior moderno Wynwood">
   <div>
     <h2>{{ copy.invest_title }}</h2>
     <p>{{ copy.invest_body }}</p>
   </div>
-  <a href="#">{{ copy.learn_more }}</a>
+  <a href="mailto:sales@wynwoodhouse.com?subject=Invest%20with%20Wynwood">{{ copy.learn_more }}</a>
 </section>
 
 <section class="wh-press-strip" aria-label="Press mentions">

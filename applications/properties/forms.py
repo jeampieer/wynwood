@@ -11,11 +11,25 @@ class SearchForm(forms.Form):
         empty_label="Ciudad de destino",
         label="Ciudad",
     )
-    check_in = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}), label="Llegada")
-    check_out = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}), label="Salida")
-    guests = forms.IntegerField(min_value=1, required=False, label="Huéspedes")
+    check_in = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"type": "date", "data-date-start": ""}),
+        label="Llegada",
+    )
+    check_out = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"type": "date", "data-date-end": ""}),
+        label="Salida",
+    )
+    guests = forms.IntegerField(
+        min_value=1,
+        required=False,
+        widget=forms.NumberInput(attrs={"data-guest-count": "", "min": "1"}),
+        label="Huéspedes",
+    )
 
     def __init__(self, *args, language="es", **kwargs):
+        self.language = language
         super().__init__(*args, **kwargs)
         today = timezone.localdate().isoformat()
         self.fields["check_in"].widget.attrs["min"] = today
@@ -35,10 +49,26 @@ class SearchForm(forms.Form):
         check_in = cleaned.get("check_in")
         check_out = cleaned.get("check_out")
         today = timezone.localdate()
+        language = self.language if self.language in {"es", "en"} else "es"
         if check_in and check_in < today:
-            self.add_error("check_in", "La fecha de llegada no puede estar en el pasado.")
+            self.add_error(
+                "check_in",
+                "La fecha de llegada no puede estar en el pasado."
+                if language == "es"
+                else "Arrival date cannot be in the past.",
+            )
         if check_out and check_out < today:
-            self.add_error("check_out", "La fecha de salida no puede estar en el pasado.")
+            self.add_error(
+                "check_out",
+                "La fecha de salida no puede estar en el pasado."
+                if language == "es"
+                else "Departure date cannot be in the past.",
+            )
         if check_in and check_out and check_in >= check_out:
-            self.add_error("check_out", "La salida debe ser posterior a la llegada.")
+            self.add_error(
+                "check_out",
+                "La salida debe ser posterior a la llegada."
+                if language == "es"
+                else "Departure must be after arrival.",
+            )
         return cleaned

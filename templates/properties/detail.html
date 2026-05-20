@@ -28,10 +28,10 @@
       <p class="wh-location">{{ property.neighborhood }}, {{ property.city.name }}</p>
       <p>{{ property.description }}</p>
       <div class="wh-specs">
-        <span>{{ property.capacity }} invitados</span>
-        <span>{{ property.bedrooms }} habitación</span>
-        <span>{{ property.beds }} cama</span>
-        <span>{{ property.bathrooms }} baño</span>
+        <span>{{ property.capacity }} {{ copy.guests }}</span>
+        <span>{{ property.bedrooms }} {{ copy.bedroom }}</span>
+        <span>{{ property.beds }} {{ copy.bed }}</span>
+        <span>{{ property.bathrooms }} {{ copy.bath }}</span>
       </div>
       <div class="wh-amenities">
         {% for amenity in property.amenities.all %}
@@ -40,19 +40,20 @@
       </div>
     </article>
     <aside id="reserve" class="wh-booking-card">
-      <div class="wh-tabs"><strong>DIARIO</strong><span>MENSUAL</span></div>
-      <p><strong>USD {{ property.nightly_price }}</strong> por noche</p>
-      <form method="post">
+      <div class="wh-tabs"><strong>{{ copy.daily }}</strong><span>{{ copy.monthly }}</span></div>
+      <p><strong>USD {{ property.nightly_price }}</strong> {{ copy.per_night }}</p>
+      <form method="post" data-language="{{ current_language }}">
         {% csrf_token %}
+        {% if request.GET.city %}<input type="hidden" name="city" value="{{ request.GET.city }}">{% endif %}
         {{ booking_form.non_field_errors }}
         <label>
-          Llegada · Salida
+          {{ copy.dates }}
           <span class="wh-date-pair">{{ booking_form.check_in }}{{ booking_form.check_out }}</span>
           {{ booking_form.check_in.errors }}
           {{ booking_form.check_out.errors }}
         </label>
         <label>{{ booking_form.guests.label }}{{ booking_form.guests }}{{ booking_form.guests.errors }}</label>
-        <button type="submit">Reservar ahora</button>
+        <button type="submit">{{ copy.book_now }}</button>
       </form>
     </aside>
   </div>

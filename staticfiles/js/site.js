@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         window.localStorage.setItem(storageKey, String(deadline));
       } catch (error) {
-        // The countdown still works for this page view when storage is unavailable.
       }
       return deadline;
     };
@@ -50,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
           window.localStorage.removeItem(storageKey);
         } catch (error) {
-          // No storage cleanup is needed when storage is unavailable.
         }
         window.clearInterval(intervalId);
       }
@@ -147,6 +145,140 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   }
+
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+  const parseDate = (value) => {
+    if (!value) {
+      return null;
+    }
+    const parts = value.split("-").map(Number);
+    if (parts.length !== 3 || parts.some(Number.isNaN)) {
+      return null;
+    }
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+  };
+  const addDays = (date, days) => {
+    const next = new Date(date.getTime());
+    next.setDate(next.getDate() + days);
+    return next;
+  };
+  const messages = {
+    es: {
+      pastCheckIn: "La fecha de llegada no puede estar en el pasado.",
+      pastCheckOut: "La fecha de salida no puede estar en el pasado.",
+      order: "La salida debe ser posterior a la llegada.",
+      guests: "Huéspedes debe ser al menos 1.",
+    },
+    en: {
+      pastCheckIn: "Arrival date cannot be in the past.",
+      pastCheckOut: "Departure date cannot be in the past.",
+      order: "Departure must be after arrival.",
+      guests: "Guests must be at least 1.",
+    },
+  };
+
+  document.querySelectorAll("form").forEach((form) => {
+    const checkIn = form.querySelector("[data-date-start], input[name='check_in']");
+    const checkOut = form.querySelector("[data-date-end], input[name='check_out']");
+    const guests = form.querySelector("[data-guest-count], input[name='guests']");
+    if (!checkIn && !checkOut && !guests) {
+      return;
+    }
+
+    const language = form.dataset.language || document.documentElement.lang || "es";
+    const copy = messages[language] || messages.es;
+    const today = formatDate(new Date());
+
+    if (checkIn) {
+      checkIn.min = checkIn.min || today;
+    }
+    if (checkOut) {
+      checkOut.min = checkOut.min || today;
+    }
+    if (guests) {
+      guests.min = guests.min || "1";
+    }
+
+    const validateDates = ({ adjust = false } = {}) => {
+      if (checkIn) {
+        checkIn.setCustomValidity("");
+      }
+      if (checkOut) {
+        checkOut.setCustomValidity("");
+      }
+      if (!checkIn || !checkOut) {
+        return true;
+      }
+
+      const start = parseDate(checkIn.value);
+      const end = parseDate(checkOut.value);
+      const minStart = parseDate(today);
+      let valid = true;
+
+      if (start) {
+        const nextDay = formatDate(addDays(start, 1));
+        checkOut.min = nextDay;
+        if (adjust && (!end || end <= start)) {
+          checkOut.value = nextDay;
+        }
+      } else {
+        checkOut.min = today;
+      }
+
+      const adjustedEnd = parseDate(checkOut.value);
+      if (start && start < minStart) {
+        checkIn.setCustomValidity(copy.pastCheckIn);
+        valid = false;
+      }
+      if (adjustedEnd && adjustedEnd < minStart) {
+        checkOut.setCustomValidity(copy.pastCheckOut);
+        valid = false;
+      }
+      if (start && adjustedEnd && adjustedEnd <= start) {
+        checkOut.setCustomValidity(copy.order);
+        valid = false;
+      }
+      return valid;
+    };
+
+    const validateGuests = () => {
+      if (!guests) {
+        return true;
+      }
+      guests.setCustomValidity("");
+      if (guests.value !== "" && Number(guests.value) < 1) {
+        guests.setCustomValidity(copy.guests);
+        return false;
+      }
+      return true;
+    };
+
+    if (checkIn) {
+      checkIn.addEventListener("change", () => validateDates({ adjust: true }));
+      checkIn.addEventListener("input", () => validateDates());
+    }
+    if (checkOut) {
+      checkOut.addEventListener("change", () => validateDates());
+      checkOut.addEventListener("input", () => validateDates());
+    }
+    if (guests) {
+      guests.addEventListener("input", validateGuests);
+    }
+    form.addEventListener("submit", (event) => {
+      if (!validateDates() || !validateGuests() || !form.checkValidity()) {
+        event.preventDefault();
+        form.reportValidity();
+      }
+    });
+
+    validateDates();
+    validateGuests();
+  });
 
   const destinationTrack = document.querySelector("[data-carousel-track]");
   const previousButton = document.querySelector("[data-carousel-prev]");

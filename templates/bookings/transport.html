@@ -1,28 +1,28 @@
 {% extends "base/site.html" %}
 {% load static %}
-{% block title %}Transporte · Wynwood{% endblock %}
+{% block title %}{{ copy.transport_step }} · Wynwood{% endblock %}
 {% block content %}
 <section class="wh-service-step wh-addon-step">
   <div class="wh-detail-top">
     <span>{{ ui.menu }}</span>
     <a class="wh-brand" href="{% url 'pages:home' %}">wynwood<span>*</span></a>
-    <nav><a href="{% url 'bookings:services' property.slug %}?{{ request.GET.urlencode }}">Servicios</a> <a href="{{ checkout_url }}">{{ ui.book_now }}</a></nav>
+    <nav><a href="{% url 'bookings:services' property.slug %}?{{ request.GET.urlencode }}">{{ copy.services }}</a> <a href="{{ checkout_url }}">{{ ui.book_now }}</a></nav>
   </div>
-  <nav class="wh-breadcrumb">✶ {{ property.city.country }} / {{ property.city.name }} / {{ property.name }} / Transporte</nav>
+  <nav class="wh-breadcrumb">✶ {{ property.city.country }} / {{ property.city.name }} / {{ property.name }} / {{ copy.transport_step }}</nav>
 
   <div class="wh-addon-layout wh-transport-layout">
     <form method="post" class="wh-addon-form">
       {% csrf_token %}
-      <p class="wh-step-kicker">04. Servicio de transporte</p>
-      <h1>MUÉVETE SIN FRICCIÓN</h1>
-      <p>Configura el traslado para que tu llegada o salida mantenga la misma experiencia Wynwood.</p>
+      <p class="wh-step-kicker">{{ copy.transport_step }}</p>
+      <h1>{{ copy.transport_title }}</h1>
+      <p>{{ copy.transport_intro }}</p>
       {{ form.non_field_errors }}
       <label>{{ form.transfer_type.label }}{{ form.transfer_type }}{{ form.transfer_type.errors }}</label>
       <label>{{ form.flight_number.label }}{{ form.flight_number }}</label>
       <label>{{ form.pickup_address.label }}{{ form.pickup_address }}{{ form.pickup_address.errors }}</label>
       <label>{{ form.passengers.label }}{{ form.passengers }}{{ form.passengers.errors }}</label>
       <label>{{ form.notes.label }}{{ form.notes }}</label>
-      <button class="wh-primary" type="submit">Añadir y continuar</button>
+      <button class="wh-primary" type="submit">{{ copy.add_continue }}</button>
     </form>
     <div class="wh-addon-media">
       <img src="{% static 'img/figma/service-transport.webp' %}" alt="">

@@ -1,6 +1,6 @@
 {% extends "base/site.html" %}
 {% load static %}
-{% block title %}Checkout · Wynwood{% endblock %}
+{% block title %}{{ copy.checkout_page }} · Wynwood{% endblock %}
 {% block content %}
 <section class="wh-checkout">
   <div class="wh-detail-top">
@@ -8,15 +8,15 @@
     <a class="wh-brand" href="{% url 'pages:home' %}">wynwood<span>*</span></a>
     <nav><a href="?lang=en">EN</a> / <a href="?lang=es">ES</a> <a href="{% url 'accounts:login' %}">{{ ui.login }}</a> <a href="#pay">{{ ui.book_now }}</a></nav>
   </div>
-  <nav class="wh-breadcrumb">✶ {{ property.city.country }} / {{ property.city.name }} / {{ property.name }} / Página de pago</nav>
+  <nav class="wh-breadcrumb">✶ {{ property.city.country }} / {{ property.city.name }} / {{ property.name }} / {{ copy.checkout_page }}</nav>
   <div class="wh-checkout-layout">
     <form method="post" class="wh-checkout-form" data-checkout-form>
       {% csrf_token %}
-      <h1>REGISTRO</h1>
-      <p>Te enviaremos la confirmación de tu reserva por correo electrónico.</p>
+      <h1>{{ copy.checkout_title }}</h1>
+      <p>{{ copy.checkout_intro }}</p>
       {% if form.errors %}
         <div class="wh-form-alert" role="alert" aria-live="polite">
-          Revisa los campos marcados para continuar con el pago.
+          {{ copy.checkout_error }}
         </div>
       {% endif %}
       {{ form.non_field_errors }}
@@ -42,21 +42,21 @@
         <label>{{ form.phone.label }}{{ form.phone }}</label>
       </div>
       <div class="wh-checkout-heading-row">
-        <h2>SERVICIOS ADICIONALES</h2>
-        <a href="{{ services_url }}">Editar servicios</a>
+        <h2>{{ copy.additional_services }}</h2>
+        <a href="{{ services_url }}">{{ copy.edit_services }}</a>
       </div>
       <div class="wh-services">
         {% for option in service_options %}
           <label class="wh-service-row">
             <img src="{% static option.image %}" alt="">
             <input type="checkbox" name="services" value="{{ option.service.pk }}"{% if option.selected %} checked{% endif %}>
-            <span>{{ option.service.name }} · USD {{ option.service.price }}</span>
+            <span>{{ option.name }} · USD {{ option.service.price }}</span>
           </label>
         {% endfor %}
       </div>
-      <h2>MÉTODO DE PAGO</h2>
-      <div class="wh-payment-method">💳 Pago con tarjeta Débito / Crédito · Simulado</div>
-      <button id="pay" class="wh-primary" type="submit" data-pay-button>Pagar y confirmar reserva</button>
+      <h2>{{ copy.payment_method }}</h2>
+      <div class="wh-payment-method">💳 {{ copy.mock_payment }}</div>
+      <button id="pay" class="wh-primary" type="submit" data-pay-button>{{ copy.pay_confirm }}</button>
     </form>
     <aside class="wh-summary">
       {% with cover=property.cover_image %}
@@ -73,15 +73,15 @@
       <h2>{{ property.name }}</h2>
       <p>{{ property.neighborhood }}, {{ property.city.name }}</p>
       <dl>
-        <dt>Fechas</dt><dd>{{ availability.check_in }} · {{ availability.check_out }}</dd>
-        <dt>Huéspedes</dt><dd>{{ availability.guests }} personas</dd>
-        <dt>Subtotal</dt><dd>USD {{ preview.subtotal }}</dd>
-        <dt>Tarifa de limpieza</dt><dd>USD {{ preview.cleaning_fee }}</dd>
-        <dt>Impuestos</dt><dd>USD {{ preview.taxes }}</dd>
-        <dt>Descuento Wynwood Points</dt><dd>-USD {{ preview.discount }}</dd>
-        <dt>Total</dt><dd><strong>USD {{ preview.total }}</strong></dd>
+        <dt>{{ copy.dates }}</dt><dd>{{ availability.check_in }} · {{ availability.check_out }}</dd>
+        <dt>{{ copy.guests }}</dt><dd>{{ availability.guests }} {{ copy.people }}</dd>
+        <dt>{{ copy.subtotal }}</dt><dd>USD {{ preview.subtotal }}</dd>
+        <dt>{{ copy.cleaning_fee }}</dt><dd>USD {{ preview.cleaning_fee }}</dd>
+        <dt>{{ copy.taxes }}</dt><dd>USD {{ preview.taxes }}</dd>
+        <dt>{{ copy.discount }}</dt><dd>-USD {{ preview.discount }}</dd>
+        <dt>{{ copy.total }}</dt><dd><strong>USD {{ preview.total }}</strong></dd>
       </dl>
-      <small>Con esta reserva estás generando Wynwood Points.</small>
+      <small>{{ copy.points }}</small>
     </aside>
   </div>
 </section>

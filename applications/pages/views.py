@@ -32,6 +32,8 @@ DEFAULT_COPY = {
         "invest_title": "Invierte en real estate",
         "invest_body": "Compra o renta una propiedad y obtén asesoramiento profesional.",
         "learn_more": "Saber más",
+        "all_properties": "Todas las propiedades",
+        "empty_featured": "No hay propiedades destacadas disponibles por ahora.",
     },
     "en": {
         "promo": "10% off selected stays",
@@ -55,6 +57,8 @@ DEFAULT_COPY = {
         "invest_title": "Invest in real estate",
         "invest_body": "Buy or rent a property with professional advice.",
         "learn_more": "Learn more",
+        "all_properties": "All properties",
+        "empty_featured": "No featured properties are available right now.",
     },
 }
 

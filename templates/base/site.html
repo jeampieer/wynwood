@@ -28,8 +28,8 @@
                     <a href="{% url 'properties:search' %}"
                         >{{ ui.collection }}</a
                     >
-                    <a href="#">{{ ui.list_property }}</a>
-                    <a href="#">{{ ui.invest }}</a>
+                    <a href="mailto:sales@wynwoodhouse.com?subject=List%20my%20property">{{ ui.list_property }}</a>
+                    <a href="{% url 'pages:home' %}#invest">{{ ui.invest }}</a>
                 </div>
                 <div class="wh-actions">
                     {% if user.is_authenticated %}
@@ -62,7 +62,7 @@
 
         {% block footer %}
         <footer class="wh-footer">
-            <div class="wh-footer-search">
+            <form class="wh-footer-search" method="get" action="{% url 'properties:search' %}" data-language="{{ current_language }}">
                 <a
                     class="wh-footer-logo"
                     href="{% url 'pages:home' %}"
@@ -70,27 +70,27 @@
                 >
                     wynwood<sup>*</sup><small>house</small>
                 </a>
-                <a class="wh-footer-field" href="{% url 'properties:search' %}">
-                    <span>⌕ Destino</span>
-                    <strong>Lima, Perú</strong>
+                <label class="wh-footer-field">
+                    <span>⌕ {{ ui.destination }}</span>
+                    {% if footer_search_form %}{{ footer_search_form.city }}{% else %}<strong>Lima, Perú</strong>{% endif %}
                     <em>+</em>
-                </a>
-                <a class="wh-footer-field" href="{% url 'properties:search' %}">
-                    <span>▦ Llegada - Salida</span>
-                    <strong>Agregar fechas</strong>
+                </label>
+                <label class="wh-footer-field wh-footer-field--dates">
+                    <span>▦ {{ ui.dates }}</span>
+                    {% if footer_search_form %}
+                    <strong class="wh-footer-date-inputs">{{ footer_search_form.check_in }}{{ footer_search_form.check_out }}</strong>
+                    {% else %}
+                    <strong>{{ ui.add_dates }}</strong>
+                    {% endif %}
                     <em>+</em>
-                </a>
-                <a class="wh-footer-field" href="{% url 'properties:search' %}">
-                    <span>♙ Huéspedes</span>
-                    <strong>2 Huéspedes</strong>
+                </label>
+                <label class="wh-footer-field">
+                    <span>♙ {{ ui.guests }}</span>
+                    {% if footer_search_form %}{{ footer_search_form.guests }}{% else %}<strong>{{ ui.guest_count }}</strong>{% endif %}
                     <em>+</em>
-                </a>
-                <a
-                    class="wh-footer-search-button"
-                    href="{% url 'properties:search' %}"
-                    >Buscar</a
-                >
-            </div>
+                </label>
+                <button class="wh-footer-search-button" type="submit">{{ ui.search }}</button>
+            </form>
 
             <div class="wh-footer-primary">
                 {% if footer_groups %}
@@ -104,51 +104,51 @@
                 {% endfor %}
                 {% else %}
                 <div class="wh-footer-column">
-                    <h2>Reservas</h2>
+                    <h2>{{ ui.reservations }}</h2>
                 </div>
                 <div class="wh-footer-column">
-                    <h2>Servicios</h2>
-                    <a href="#">Grupos & Largas Estadías</a>
-                    <a href="#">Eventos & Producciones</a>
+                    <h2>{{ ui.services }}</h2>
+                    <a href="{% url 'properties:search' %}">{{ ui.groups_long_stays }}</a>
+                    <a href="{% url 'pages:home' %}#events">{{ ui.events_productions }}</a>
                 </div>
                 <div class="wh-footer-column">
-                    <h2>Nosotros</h2>
-                    <a href="#">¿Quiénes somos?</a>
-                    <a href="#">Blog & News</a>
-                    <a href="#">Casa Wynwood</a>
-                    <a href="#">Trabaja con nosotros</a>
+                    <h2>{{ ui.about }}</h2>
+                    <a href="{% url 'pages:home' %}">{{ ui.who_we_are }}</a>
+                    <a href="{% url 'pages:home' %}#events">{{ ui.blog_news }}</a>
+                    <a href="{% url 'pages:home' %}">Casa Wynwood</a>
+                    <a href="mailto:sales@wynwoodhouse.com?subject=Careers">{{ ui.work_with_us }}</a>
                 </div>
                 <div class="wh-footer-column">
-                    <h2>Propietarios<br />& Inversionistas</h2>
-                    <a href="#">Wynwood Real Estate</a>
-                    <a href="#">{{ ui.list_property }}</a>
+                    <h2>{{ ui.owners_investors|safe }}</h2>
+                    <a href="{% url 'pages:home' %}#invest">{{ ui.real_estate }}</a>
+                    <a href="mailto:sales@wynwoodhouse.com?subject=List%20my%20property">{{ ui.list_property }}</a>
                 </div>
                 <div class="wh-footer-column">
-                    <h2>Beneficios</h2>
-                    <a href="#">Guides</a>
-                    <a href="#">Rewards Program</a>
+                    <h2>{{ ui.benefits }}</h2>
+                    <a href="{% url 'properties:search' %}">{{ ui.guides }}</a>
+                    <a href="{% url 'properties:search' %}">{{ ui.rewards }}</a>
                 </div>
                 {% endif %}
             </div>
 
             <div class="wh-footer-secondary">
                 <div class="wh-footer-column">
-                    <h2>Destinos</h2>
+                    <h2>{{ ui.destinations }}</h2>
                     <a href="{% url 'properties:search' %}">Perú</a>
                     <a href="{% url 'properties:search' %}">México</a>
                     <a href="{% url 'properties:search' %}">Panamá</a>
                     <a href="{% url 'properties:search' %}">Colombia</a>
                 </div>
                 <div class="wh-footer-column">
-                    <h2>Términos<br />y Condiciones</h2>
-                    <a href="#">Términos de servicio</a>
-                    <a href="#">Políticas de privacidad</a>
-                    <a href="#">Políticas de cancelación</a>
+                    <h2>{{ ui.terms|safe }}</h2>
+                    <a href="mailto:sales@wynwoodhouse.com?subject=Terms%20of%20service">{{ ui.terms_service }}</a>
+                    <a href="mailto:sales@wynwoodhouse.com?subject=Privacy%20policy">{{ ui.privacy }}</a>
+                    <a href="mailto:sales@wynwoodhouse.com?subject=Cancellation%20policy">{{ ui.cancellation }}</a>
                 </div>
                 <div class="wh-footer-column">
-                    <h2>Contáctanos</h2>
-                    <a href="mailto:sales@wynwoodhouse.com">Escríbenos</a>
-                    <a href="#">F.A.Q.</a>
+                    <h2>{{ ui.contact_us }}</h2>
+                    <a href="mailto:sales@wynwoodhouse.com">{{ ui.write_us }}</a>
+                    <a href="mailto:sales@wynwoodhouse.com?subject=FAQ">{{ ui.faq }}</a>
                     <a href="tel:+12536423881">☎ +1 (253) 642-3881</a>
                     <a href="mailto:sales@wynwoodhouse.com"
                         >sales@wynwoodhouse.com</a
@@ -180,32 +180,32 @@
                         /></a>
                         {% endfor %}
                         {% else %}
-                        <a href="#" aria-label="Facebook"
+                        <a href="https://www.facebook.com/wynwoodhouse" aria-label="Facebook"
                             ><img
                                 src="{% static 'img/homepage/Facebook.png' %}"
                                 alt="Facebook"
                         /></a>
-                        <a href="#" aria-label="Instagram"
+                        <a href="https://www.instagram.com/wynwoodhouse/" aria-label="Instagram"
                             ><img
                                 src="{% static 'img/homepage/Instagram.png' %}"
                                 alt="Instagram"
                         /></a>
-                        <a href="#" aria-label="LinkedIn"
+                        <a href="https://www.linkedin.com/company/wynwood-house/" aria-label="LinkedIn"
                             ><img
                                 src="{% static 'img/homepage/linkedin.png' %}"
                                 alt="LinkedIn"
                         /></a>
                         {% endif %}
                     </div>
-                    <a class="wh-footer-app-title" href="#"
-                        >Download our App for free</a
+                    <a class="wh-footer-app-title" href="{% url 'properties:search' %}"
+                        >{{ ui.download_app }}</a
                     >
                     <div class="wh-footer-badges">
-                        <a href="#"
-                            >Download on the<br /><strong>App Store</strong></a
+                        <a href="{% url 'properties:search' %}"
+                            >{{ ui.app_store|safe }}</a
                         >
-                        <a href="#"
-                            >Get it on<br /><strong>Google Play</strong></a
+                        <a href="{% url 'properties:search' %}"
+                            >{{ ui.google_play|safe }}</a
                         >
                     </div>
                 </div>

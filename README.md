@@ -1,18 +1,18 @@
-# WH Booking · Prueba Tecnica Wynwood
+# WH Booking · Prueba Técnica Wynwood
 
-Aplicacion Django para revisar el flujo de reserva de una propiedad: home, busqueda, resultados, detalle, servicios adicionales, checkout, pago simulado, confirmacion y APIs DRF.
+Aplicación Django para revisar el flujo de reserva de una propiedad: home, búsqueda, resultados, detalle, servicios adicionales, checkout, mock de pago, confirmación y APIs DRF.
 
 ## Stack
 
 - Python 3.11+
 - Django 5.2
 - Django REST Framework
-- SQLite para revision local rapida
-- PostgreSQL soportado via `.env`
-- Pillow para optimizacion de imagenes WebP
+- SQLite para revisión local rápida
+- PostgreSQL soportado vía `.env`
+- Pillow para optimización de imágenes WebP
 - Pytest para pruebas
 
-## Instalacion
+## Instalación
 
 ### Windows PowerShell
 
@@ -34,9 +34,9 @@ pip install -r requirements/dev.txt
 cp .env.example .env
 ```
 
-## Configuracion local con SQLite
+## Configuración local con SQLite
 
-`.env.example` ya viene configurado para SQLite. Con esa configuracion:
+`.env.example` ya viene configurado para SQLite. Con esa configuración:
 
 ```bash
 python manage.py migrate
@@ -45,9 +45,9 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Abre `http://127.0.0.1:8000/` y prueba una reserva con fechas futuras. El seed carga propiedades, servicios, contenido administrable de la home e imagenes demo. Tambien repara imagenes de propiedades si la base apunta a archivos que ya no existen en `media/`.
+Abre `http://127.0.0.1:8000/` y prueba una reserva con fechas futuras. El seed carga propiedades, servicios, contenido administrable de la home e imágenes demo. También repara imágenes de propiedades si la base apunta a archivos que ya no existen en `media/`.
 
-## Configuracion con PostgreSQL
+## Configuración con PostgreSQL
 
 Edita `.env`:
 
@@ -135,11 +135,20 @@ El almacenamiento de `media/` en Railway es efímero. Las imágenes de demo incl
 ## Flujo de prueba
 
 1. Entra a `http://127.0.0.1:8000/`.
-2. Busca ciudad, fechas futuras y huespedes.
+2. Busca ciudad, fechas futuras y huéspedes.
 3. Abre una propiedad, por ejemplo `/properties/modern-duplex-parque-virrey/`.
-4. Selecciona fechas disponibles y continua a servicios.
-5. Agrega servicios opcionales o continua al checkout.
-6. Registra un correo nuevo, confirma el pago simulado y revisa la confirmacion.
+4. Selecciona fechas disponibles y continúa a servicios.
+5. Agrega servicios opcionales o continúa al checkout.
+6. Registra un correo nuevo en la vista de checkout, como indica el prototipo. No hay pantalla independiente de registro porque el alta manual está integrada antes de confirmar la reserva.
+7. Confirma el mock de pago y revisa la confirmación.
+
+## Registro y pago
+
+El registro manual de un usuario nuevo ocurre dentro del checkout. Al enviar el formulario con un correo no existente se crea el usuario, se inicia sesión y se genera la reserva.
+
+El pago es simulado para la prueba técnica: la UI lo presenta como un mock de pasarela, no procesa cargos reales ni llama a un proveedor externo. Al confirmar, la aplicación crea un `Payment` con estado `paid`, referencia interna `WH-*`, monto total de la reserva y envía el correo de confirmación.
+
+Todas las imágenes subidas a propiedades se normalizan a WebP y se redimensionan con lado máximo de 1200 px, incluyendo archivos que ya llegan como `.webp`.
 
 ## Endpoints
 
@@ -157,9 +166,9 @@ Rutas legacy mantenidas por compatibilidad:
 - `GET /api/my-bookings/`
 - `GET /api/my-bookings/<id>/`
 
-Las rutas de reservas requieren autenticacion.
+Las rutas de reservas requieren autenticación.
 
-## Verificacion
+## Verificación
 
 ```bash
 python manage.py check
@@ -182,4 +191,4 @@ Health checks manuales:
 python manage.py createsuperuser
 ```
 
-Luego entra a `http://127.0.0.1:8000/admin/` para administrar ciudades, propiedades, imagenes, servicios, reservas, pagos y contenido de landing.
+Luego entra a `http://127.0.0.1:8000/admin/` para administrar ciudades, propiedades, imágenes, servicios, reservas, pagos y contenido de landing.

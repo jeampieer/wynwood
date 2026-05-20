@@ -34,9 +34,20 @@ class PropertyImage(BaseModel):
         return self.alt_text or f"Imagen de {self.property}"
 
     def save(self, *args, **kwargs):
-        if self.image and not Path(self.image.name).suffix.lower() == ".webp":
+        if self.image and self._should_optimize_image():
             self.image = self._optimize_to_webp(self.image)
         super().save(*args, **kwargs)
+
+    def _should_optimize_image(self):
+        if not self.pk:
+            return True
+        if not getattr(self.image, "_committed", True):
+            return True
+        try:
+            previous = type(self).objects.only("image").get(pk=self.pk)
+        except type(self).DoesNotExist:
+            return True
+        return previous.image.name != self.image.name
 
     def _optimize_to_webp(self, uploaded_file):
         image = Image.open(uploaded_file)

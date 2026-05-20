@@ -1,13 +1,13 @@
 {% extends "base/site.html" %}
-{% block title %}Resultados · Wynwood{% endblock %}
+{% block title %}{{ copy.title }} · Wynwood{% endblock %}
 {% block content %}
 <section class="wh-results">
-  <form class="wh-filter-bar" method="get">
+  <form class="wh-filter-bar" method="get" data-language="{{ current_language }}">
     <div class="wh-filter-grid-icon">⌘</div>
     <label>{{ form.city }}<span>+</span></label>
     <label>{{ form.check_in }}{{ form.check_out }}<span>+</span></label>
     <label>{{ form.guests }}<span>+</span></label>
-    <button type="submit">Buscar</button>
+    <button type="submit">{{ copy.search }}</button>
     {{ form.non_field_errors }}
     {{ form.city.errors }}
     {{ form.check_in.errors }}
@@ -20,14 +20,14 @@
         {% include "properties/_property_card.html" with property=property %}
       {% empty %}
         <div class="wh-empty">
-          <h2>No encontramos disponibilidad</h2>
-          <p>Prueba con otra ciudad, fecha o número de huéspedes.</p>
+          <h2>{{ copy.empty_title }}</h2>
+          <p>{{ copy.empty_body }}</p>
         </div>
       {% endfor %}
     </div>
     <aside class="wh-map-panel">
-      <span>Map</span>
-      <strong>Explora propiedades cerca de los mejores barrios.</strong>
+      <span>{{ copy.map }}</span>
+      <strong>{{ copy.map_body }}</strong>
     </aside>
   </div>
 </section>

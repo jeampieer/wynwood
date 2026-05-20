@@ -1,6 +1,6 @@
 {% extends "base/site.html" %}
 {% load static %}
-{% block title %}Servicios · Wynwood{% endblock %}
+{% block title %}{{ copy.services }} · Wynwood{% endblock %}
 {% block content %}
 <section class="wh-service-step">
   <div class="wh-detail-top">
@@ -8,13 +8,13 @@
     <a class="wh-brand" href="{% url 'pages:home' %}">wynwood<span>*</span></a>
     <nav><a href="?lang=en">EN</a> / <a href="?lang=es">ES</a> <a href="{% url 'accounts:login' %}">{{ ui.login }}</a> <a href="{{ checkout_url }}">{{ ui.book_now }}</a></nav>
   </div>
-  <nav class="wh-breadcrumb">✶ {{ property.city.country }} / {{ property.city.name }} / {{ property.name }} / Servicios</nav>
+  <nav class="wh-breadcrumb">✶ {{ property.city.country }} / {{ property.city.name }} / {{ property.name }} / {{ copy.services }}</nav>
 
   <div class="wh-service-step-layout">
     <article>
-      <p class="wh-step-kicker">03. Servicios adicionales</p>
-      <h1>BIENVENIDO A WYNWOOD HOUSE{% if request.user.first_name %} {{ request.user.first_name|upper }}{% endif %}</h1>
-      <p class="wh-step-intro">Personaliza tu estadía con servicios preparados antes de tu llegada. Puedes continuar sin seleccionar nada o entrar a los flujos específicos del prototipo.</p>
+      <p class="wh-step-kicker">{{ copy.services_step }}</p>
+      <h1>{{ copy.services_title }}{% if request.user.first_name %} {{ request.user.first_name|upper }}{% endif %}</h1>
+      <p class="wh-step-intro">{{ copy.services_intro }}</p>
 
       <div class="wh-service-list">
         {% for option in service_options %}
@@ -22,16 +22,16 @@
           <div class="wh-service-option">
             <img src="{% static option.image %}" alt="">
             <div>
-              <h2>{{ service.name }}</h2>
-              <p>{{ service.description }}</p>
+              <h2>{{ option.name }}</h2>
+              <p>{{ option.description }}</p>
               <span>USD {{ service.price }}</span>
             </div>
             {% if option.kind == "checkin" %}
-              <a href="{% url 'bookings:flexible-checkin' property.slug %}?{{ request.GET.urlencode }}">Configurar</a>
+              <a href="{% url 'bookings:flexible-checkin' property.slug %}?{{ request.GET.urlencode }}">{{ copy.configure }}</a>
             {% elif option.kind == "transport" %}
-              <a href="{% url 'bookings:transport' property.slug %}?{{ request.GET.urlencode }}">Configurar</a>
+              <a href="{% url 'bookings:transport' property.slug %}?{{ request.GET.urlencode }}">{{ copy.configure }}</a>
             {% else %}
-              <a href="{{ option.checkout_url }}">Añadir</a>
+              <a href="{{ option.checkout_url }}">{{ copy.add }}</a>
             {% endif %}
           </div>
           {% endwith %}
@@ -46,11 +46,11 @@
       <h2>{{ property.name }}</h2>
       <p>{{ property.neighborhood }}, {{ property.city.name }}</p>
       <dl>
-        <dt>Llegada</dt><dd>{{ availability.check_in }}</dd>
-        <dt>Salida</dt><dd>{{ availability.check_out }}</dd>
-        <dt>Huéspedes</dt><dd>{{ availability.guests }}</dd>
+        <dt>{{ copy.arrival }}</dt><dd>{{ availability.check_in }}</dd>
+        <dt>{{ copy.departure }}</dt><dd>{{ availability.check_out }}</dd>
+        <dt>{{ copy.guests }}</dt><dd>{{ availability.guests }}</dd>
       </dl>
-      <a class="wh-primary wh-summary-action" href="{{ checkout_url }}">Continuar a pago</a>
+      <a class="wh-primary wh-summary-action" href="{{ checkout_url }}">{{ copy.continue_payment }}</a>
     </aside>
   </div>
 </section>
