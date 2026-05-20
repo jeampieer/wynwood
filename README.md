@@ -76,8 +76,10 @@ Variables principales:
 SECRET_KEY=change-me
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
+CSRF_TRUSTED_ORIGINS=
 DB_ENGINE=django.db.backends.sqlite3
 DB_NAME=db.sqlite3
+DATABASE_URL=
 EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
 DEFAULT_FROM_EMAIL=reservas@wynwood-house.test
 ```
@@ -97,6 +99,8 @@ Para desplegar en Railway, prepara el repositorio con los siguientes archivos y 
 - `DEBUG=False`
 - `SECRET_KEY=<tu-secret-key-segura>`
 - `ALLOWED_HOSTS=<tu-app>.railway.app`
+- `CSRF_TRUSTED_ORIGINS=https://<tu-app>.railway.app`
+- `DATABASE_URL=${{Postgres.DATABASE_URL}}` si usas el plugin de Postgres de Railway
 - `DB_ENGINE=django.db.backends.postgresql`
 - `DB_NAME=<db-name>`
 - `DB_USER=<db-user>`
@@ -106,20 +110,23 @@ Para desplegar en Railway, prepara el repositorio con los siguientes archivos y 
 - `EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend`
 - `DEFAULT_FROM_EMAIL=reservas@wynwood-house.test`
 
+Si usas `DATABASE_URL`, no necesitas definir `DB_ENGINE`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST` ni `DB_PORT`.
+
 ### Comandos de despliegue
 
-En Railway, configura el comando de inicio como:
+En Railway, configura el pre-deploy command como:
 
 ```bash
-gunicorn config.wsgi --bind 0.0.0.0:$PORT
+python manage.py migrate && python manage.py collectstatic --noinput
 ```
 
-Y asegura que antes del despliegue se ejecuten:
+Y configura el custom start command como:
 
 ```bash
-python manage.py migrate
-python manage.py collectstatic --noinput
+gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
 ```
+
+El comando de inicio debe arrancar el servidor web. No uses `collectstatic` como custom start command, porque el contenedor termina después de copiar estáticos y Railway responde 502 al no encontrar un proceso escuchando en el puerto.
 
 ### Nota sobre media
 

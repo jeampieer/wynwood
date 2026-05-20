@@ -18,6 +18,12 @@ def parse_list_env(name, default=""):
 SECRET_KEY = env("SECRET_KEY", default="dev-only-secret-key")
 DEBUG = env("DEBUG", default=False)
 ALLOWED_HOSTS = parse_list_env("ALLOWED_HOSTS", "localhost,127.0.0.1")
+CSRF_TRUSTED_ORIGINS = parse_list_env("CSRF_TRUSTED_ORIGINS")
+
+railway_public_domain = env("RAILWAY_PUBLIC_DOMAIN", default="")
+if railway_public_domain:
+    ALLOWED_HOSTS.append(railway_public_domain)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{railway_public_domain}")
 
 DJANGO_APPS = [
     "django.contrib.admin",
@@ -74,15 +80,21 @@ TEMPLATES = [
     },
 ]
 
-DB_ENGINE = env("DB_ENGINE", default="django.db.backends.postgresql")
-if DB_ENGINE == "django.db.backends.sqlite3":
+DATABASE_URL = env("DATABASE_URL", default="")
+if DATABASE_URL:
+    DATABASES = {"default": env.db("DATABASE_URL")}
+    DATABASES["default"]["CONN_MAX_AGE"] = env.int("DB_CONN_MAX_AGE", default=600)
+else:
+    DB_ENGINE = env("DB_ENGINE", default="django.db.backends.postgresql")
+
+if not DATABASE_URL and DB_ENGINE == "django.db.backends.sqlite3":
     DATABASES = {
         "default": {
             "ENGINE": DB_ENGINE,
             "NAME": BASE_DIR / env("DB_NAME", default="db.sqlite3"),
         }
     }
-else:
+elif not DATABASE_URL:
     DATABASES = {
         "default": {
             "ENGINE": DB_ENGINE,
